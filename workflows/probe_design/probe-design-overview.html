@@ -1,0 +1,238 @@
+<h1 id="probe-design-for-cov-2">Probe-design for COV-2</h1>
+<ul>
+<li><a href="#probe-design-for-cov-2">Probe-design for COV-2</a>
+<ul>
+<li><a href="#general-considerations">General considerations</a></li>
+<li><a href="#target-region-analysis">Target region analysis</a></li>
+<li><a href="#probe-design-workflow">Probe-design workflow</a>
+<ul>
+<li><a href="#1-create-fasta-file-python">1. Create fasta file [Python]</a>
+<ul>
+<li><a href="#workflow">Workflow</a></li>
+</ul></li>
+<li><a href="#2-design-probes-r">2. Design probes [R]</a>
+<ul>
+<li><a href="#workflow-1">Workflow</a></li>
+</ul></li>
+<li><a href="#3-blast-sequences-local-databases">3. Blast sequences: LOCAL databases</a>
+<ul>
+<li><a href="#build-local-database-from-downloaded-fasta-sequences">Build local database from downloaded fasta sequences</a></li>
+<li><a href="#workflow-2">Workflow</a></li>
+</ul></li>
+<li><a href="#4blast-sequence-against-human-transcriptome">4.Blast sequence against human transcriptome</a></li>
+<li><a href="#5-combine-results">5. Combine results</a>
+<ul>
+<li><a href="#workflow-3">Workflow</a></li>
+</ul></li>
+<li><a href="#4-blast-sequence-against-human-transcriptome">4. Blast sequence against human transcriptome</a></li>
+<li><a href="#5-query-probes">5. Query probes</a>
+<ul>
+<li><a href="#workflow-4">Workflow</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#additional-information">Additional information</a>
+<ul>
+<li><a href="#ressources">Ressources</a></li>
+<li><a href="#blast">Blast</a>
+<ul>
+<li><a href="#windows">Windows</a></li>
+<li><a href="#blastn-output-format-6">BLASTn output format 6</a></li>
+<li><a href="#local-blast-out-of-memory-error-windows">Local blast: Out of memory error: windows</a></li>
+<li><a href="#other-output-format-for-local-blast">Other output format for local blast</a></li>
+<li><a href="#make-blast-over-the-internet-no-local-installation-required">Make blast over the internet (no local installation required)</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="general-considerations">General considerations</h2>
+<p><strong>Target</strong>: <strong>SARS-CoV-2</strong> (NC_045512.2) Sequence of viruse stored in <code>data\Wuhan-Hu-1_2019.gb</code></p>
+<p><strong>Probe should be specific over Beta-Coronaviruses (SARS, MERS, HKU1, OC43, NL63, and 229E):</strong></p>
+<ul>
+<li>SARS (NC_004718.3): https://www.ncbi.nlm.nih.gov/nuccore/NC_004718.3?report=fasta</li>
+<li>MERS (NC_019843.3): https://www.ncbi.nlm.nih.gov/nuccore/NC_019843.3?report=fasta</li>
+<li>HKU1 (NC_006577.2): https://www.ncbi.nlm.nih.gov/nuccore/NC_006577.2?report=fasta<br />
+</li>
+<li>OC43 (NC_006213.1): https://www.ncbi.nlm.nih.gov/nuccore/NC_006213.1</li>
+<li>NL63 (JX504050.1): https://www.ncbi.nlm.nih.gov/nuccore/JX504050.1?report=fasta</li>
+<li>229E (NC_002645.1): https://www.ncbi.nlm.nih.gov/nuccore/NC_002645.1?report=fasta</li>
+</ul>
+<p><strong>Additional specifity requirements:</strong></p>
+<ul>
+<li>Mycobacterium tuberculosis (NC_000962): https://www.ncbi.nlm.nih.gov/nuccore/NC_000962.3</li>
+</ul>
+<p><strong>Not sure where to get this ones</strong>:</p>
+<ul>
+<li>Influenza A: not sure what sequence to use</li>
+<li>Betacoronavirus 1: when I search for this, I get OC43</li>
+</ul>
+<h2 id="target-region-analysis">Target region analysis</h2>
+<p>Performed by the lab of Etienne Simon Loriere.</p>
+<p>Results are provided as a text file <code>data\Wuhan-Hu-1_2019_potential_target_regions.tsv</code> indicating start/end coordinates of</p>
+<ol type="1">
+<li><strong>Primer regions</strong> used in qPCR test</li>
+<li><strong>Potential target regions</strong></li>
+</ol>
+<p>I added two more regions 3. <strong>Spike clyco protein encoding region</strong> 4. <strong>Entire genome</strong></p>
+<h2 id="probe-design-workflow">Probe-design workflow</h2>
+<h3 id="create-fasta-file-python">1. Create fasta file [Python]</h3>
+<p>Takes the file with the target regions, extracts their sequences, and creates a separate fasta file for primers, and target regions.</p>
+<p><strong>Note</strong>: fasta file names, seqquence ids or description should <strong>NOT</strong> contain underscores. In Oligostan, underscores are used to split string to extract some meta-data.</p>
+<h4 id="workflow">Workflow</h4>
+<p><strong>Function</strong>: <code>probe_design\1_create_fasta_of_target_region.py</code></p>
+<p><strong>Input</strong>:</p>
+<ol type="1">
+<li><code>data\Wuhan-Hu-1_2019.gb</code></li>
+<li><code>data\Wuhan-Hu-1_2019_potential_target_regions.tsv</code></li>
+</ol>
+<p><strong>Output</strong>:</p>
+<ol type="1">
+<li><code>data\Wuhan-Hu-1_2019.gb</code></li>
+<li><code>data\Wuhan-Hu-1_2019_potential_target_regions.tsv</code></li>
+</ol>
+<h3 id="design-probes-r">2. Design probes [R]</h3>
+<p>We use Oligostan for <a href="https://www.ncbi.nlm.nih.gov/pubmed/27599845">probe-design</a>.</p>
+<ul>
+<li>Runs in <strong>R</strong> as a script.</li>
+<li>Requires installation of some extra packages: <code>install.packages(c("ade4", "seqinr", "zoo"))</code></li>
+<li>Takes <strong>fasta files</strong> as an input.
+<ul>
+<li>Multi-fasta is supported.</li>
+<li>File-names, sequence ids or description can NOT contain underscores</li>
+<li>When specifying path names under windows, <code>\</code> has to be replaced by <code>/</code></li>
+</ul></li>
+</ul>
+<h4 id="workflow-1">Workflow</h4>
+<p><strong>Function</strong>: <code>probe_design\oligostan.r</code></p>
+<p><strong>Input</strong>:</p>
+<ol type="1">
+<li><code>data\Wuhan-Hu-1_2019.gb</code></li>
+<li><code>data\Wuhan-Hu-1_2019_potential_target_regions.tsv</code></li>
+</ol>
+<h3 id="blast-sequences-local-databases">3. Blast sequences: LOCAL databases</h3>
+<p>Local blast. Requires command line tools and Python packages</p>
+<ul>
+<li>BioPython</li>
+<li>Local version of blast + databases being installed.</li>
+<li>Some more information
+<ul>
+<li>https://biopython.org/DIST/docs/tutorial/Tutorial.html search for “Running blast locally”</li>
+<li>Blast+ user manual: https://www.ncbi.nlm.nih.gov/books/NBK279690/</li>
+<li>https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&amp;PAGE_TYPE=BlastDocs&amp;DOC_TYPE=Download</li>
+</ul></li>
+<li>Downloads:
+<ul>
+<li>Blast+ suite: https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/</li>
+<li>Instructions for different operating systems are provided. Important; blast commands have to be in system path. https://www.ncbi.nlm.nih.gov/books/NBK279671/</li>
+<li>Database for human transcripts: https://ftp.ncbi.nlm.nih.gov/blast/db/</li>
+</ul></li>
+<li>Local databases can be build for alignment against any fasta sequence.</li>
+</ul>
+<h4 id="build-local-database-from-downloaded-fasta-sequences">Build local database from downloaded fasta sequences</h4>
+<p>FASTA sequence for all other coronaviruses are truncated together as a multi-fasta file.</p>
+<ol type="1">
+<li>Build database from fasta for all corona-viruses (multi-fasta file): <code>makeblastdb -in corona_family.fasta -dbtype nucl -title corona-family</code></li>
+<li>Build database from fasta for cov-2: <code>makeblastdb -in tuberculosis.fasta -dbtype nucl -title tuberculosis -max_file_sz 500000 -parse_seqids</code></li>
+<li>Build database from fasta for cov-2: <code>makeblastdb -in cov-2.fasta -dbtype nucl -title cov-2 -max_file_sz 500000 -parse_seqids</code></li>
+</ol>
+<ul>
+<li>The <code>-parse_seqids</code> option is required to keep the original sequence identifiers.</li>
+<li>The <code>-max_file_sz</code> option helps to avoid an error under windows?</li>
+</ul>
+<p>Build can provoke error messages under Windows. See misc below.</p>
+<h4 id="workflow-2">Workflow</h4>
+<p>probe_design_probe_sequences.py</p>
+<p><strong>Function</strong>: <code>probe_design\3_blast_local.py</code></p>
+<p><strong>Input</strong>:</p>
+<ol type="1">
+<li>Fasta files with probe sequences</li>
+<li>Local blastn databases</li>
+</ol>
+<p><strong>Output</strong>:</p>
+<ol type="1">
+<li>Blast hit files. http://www.metagenomics.wiki/tools/blast/blastn-output-format-6</li>
+</ol>
+<h3 id="blast-sequence-against-human-transcriptome">4.Blast sequence against human transcriptome</h3>
+<ol type="1">
+<li>blastn website</li>
+<li>drag multi-fasta file with all sequences</li>
+<li>Download results as hit file (csv).</li>
+</ol>
+<h3 id="combine-results">5. Combine results</h3>
+<p>Results are combined: details of probe design and fasta results.</p>
+<h4 id="workflow-3">Workflow</h4>
+<p><strong>Function</strong>: <code>probe_design\4_blast_combine.py</code></p>
+<p><strong>Input</strong>:</p>
+<ol type="1">
+<li>Fasta files from local search</li>
+<li>Fasta files from web search</li>
+</ol>
+<p><strong>Output</strong>:</p>
+<ol type="1">
+<li>csv file with all information of probes</li>
+<li>Some plots showing mismatch distribution.</li>
+</ol>
+<h3 id="blast-sequence-against-human-transcriptome-1">4. Blast sequence against human transcriptome</h3>
+<ol type="1">
+<li>blastn website</li>
+<li>drag multi-fasta file with all sequences</li>
+<li>Download results as hit file (csv).</li>
+</ol>
+<h3 id="query-probes">5. Query probes</h3>
+<p>Results as pandas dataframe. Query probes</p>
+<h4 id="workflow-4">Workflow</h4>
+<p><strong>Function</strong>: <code>probe_design\5_probes_query.py</code></p>
+<p><strong>Input</strong>:</p>
+<ol type="1">
+<li>Summary csv files</li>
+</ol>
+<p><strong>Output</strong>:</p>
+<ol type="1">
+<li>Fasta file with queried sequence.</li>
+<li>Plot with distribution of probes along sequence.</li>
+</ol>
+<h2 id="additional-information">Additional information</h2>
+<h3 id="ressources">Ressources</h3>
+<ul>
+<li><strong>European Bioinformatics Institute</strong>: https://www.ebi.ac.uk/Tools/</li>
+</ul>
+<h3 id="blast">Blast</h3>
+<h4 id="windows">Windows</h4>
+<p>Installed under <code>C:\Program Files\NCBI\blast-2.10.0+</code></p>
+<p><code>Path</code> was automatically update with bin directory: <code>C:\Program Files\NCBI\blast-2.10.0+\bin</code></p>
+<h4 id="blastn-output-format-6">BLASTn output format 6</h4>
+<p>Obtained when downloading blastn internet searches as a <strong>hit table</strong>. BLASTn tabular output format 6.</p>
+<ul>
+<li><code>qseqid</code>: query (e.g., unknown gene) sequence id</li>
+<li><code>sseqid</code>: subject (e.g., reference genome) sequence id</li>
+<li><code>pident</code>: percentage of identical matches</li>
+<li><code>length</code>: alignment length (sequence overlap)</li>
+<li><code>mismatch</code>: number of mismatches</li>
+<li><code>gapopen</code>: number of gap openings</li>
+<li><code>qstart</code>: start of alignment in query</li>
+<li><code>qend</code>: end of alignment in query</li>
+<li><code>sstart</code>: start of alignment in subject</li>
+<li><code>send</code>: end of alignment in subject</li>
+<li><code>evalue</code>: expect value</li>
+<li><code>bitscore</code>: bit score</li>
+</ul>
+<p><strong>Note</strong>: additional fields could be added. From blastn -help:</p>
+<p><code>qseq</code> means Aligned part of query sequence <code>sseq</code> means Aligned part of subject sequence</p>
+<p>Note that qseq/sseq may contain gaps (<code>-</code> characters).</p>
+<h4 id="local-blast-out-of-memory-error-windows">Local blast: Out of memory error: windows</h4>
+<p>This can create an error on windows (https://github.com/flu-crew/octoFLU/issues/16). Can be resolved by by setting an environmental variable <code>BLASTDB_LMDB_MAP_SIZE=1000000</code></p>
+<p>Steps to create or modify environment variables are summarized below:</p>
+<ol type="1">
+<li>Search for “Environment Variables” and Select “Edit environmental …”.</li>
+<li>Click the “New” button under the “User variable for …” panel</li>
+<li>Type the environment variable <code>BLASTDB_LMDB_MAP_SIZE</code> and set its value to <code>1000000</code></li>
+<li>Click “OK” to close the prompts</li>
+</ol>
+<h4 id="other-output-format-for-local-blast">Other output format for local blast</h4>
+<p>https://www.reddit.com/r/bioinformatics/comments/4ef5p8/how_to_filter_blast_results_using_biopython/</p>
+<p>will only work with a local installation</p>
+<p>So if you output tabular BLAST results (-outfmt 6), you can use Pandas to quickly read, sort, filter your BLAST results without having to worry too much about for loops, iterators and parsing properly. Pandas DataFrame is similar to the R data.frame - basically a data table with a lot of nice convenience functions for sorting, filtering, reading, writing, etc.</p>
+<p>For example with tabular output file blast-out.b6:</p>
+<h4 id="make-blast-over-the-internet-no-local-installation-required">Make blast over the internet (no local installation required)</h4>
+<p>Starting point: https://www.biostars.org/p/129932/</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="im">from</span> Bio.Blast <span class="im">import</span> NCBIWWW</span>
+<span id="cb1-2"><a href="#cb1-2"></a>result_handle <span class="op">=</span> NCBIWWW.qblast(<span class="st">&quot;blastn&quot;</span>, <span class="st">&quot;nt&quot;</span>, some_sequence)</span></code></pre></div>
