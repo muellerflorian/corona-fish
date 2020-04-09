@@ -19,13 +19,31 @@ db = path_genomes / 'cov-2' / 'cov-2.fasta'
 probe_designer.blast_probes(file_fasta, db, min_identity=0.75,  add_new_line=False)
 
 # Blast against other databases
-db_blast = [path_genomes / 'beta-corona' / 'beta-corona.fasta',
-            path_genomes / 'tuberculosis' / 'tuberculosis.fasta']
+db_blast = [path_genomes / 'beta-corona' / 'beta-corona.fasta'],
+            path_genomes / 'viruses' / 'tuberculosis.fasta']
+            path_genomes / 'viruses' / 'hpiv1.fasta',
+            path_genomes / 'viruses' / 'hpiv2.fasta',
+            path_genomes / 'viruses' / 'hpiv3.fasta',
+            path_genomes / 'viruses' / 'hpiv4.fasta'
+            ]
 
 blast_summary_list = []
 for db in db_blast:
     blast_loop = probe_designer.blast_probes(file_fasta, db, min_identity=0.75, add_new_line=False)
     blast_summary_list.append([blast_loop])
+
+
+# Blast against other databases
+path_db_blast = path_genomes / 'viruses'
+
+for db in path_db_blast.glob('*.fasta'):
+    print(f'Performing local blast against: {db}')
+          
+    try:
+        blast_loop = probe_designer.blast_probes(file_fasta, db, min_identity=0.75, add_new_line=False)
+        blast_summary_list.append([blast_loop])
+    except:
+        print('Blast failed. Maybe database is not build?')
 
 
 # %%

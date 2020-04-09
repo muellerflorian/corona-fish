@@ -1,8 +1,19 @@
 # Folders and files created by Oligostan
 Probes_*/
 .Rhistory
-
 .vscode/
+
+# blast database
+*.nto
+*.ndb
+*.nhr
+*.nin
+*.nog
+*.nos
+*.not
+*.nsq
+*.ntf
+*.nto
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

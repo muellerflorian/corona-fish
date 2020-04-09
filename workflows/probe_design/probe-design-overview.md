@@ -45,23 +45,23 @@ __Probe should be specific over other Coronaviruses:__
 
 __Additional specifity requirements:__
 
-| Virus/pathogen                                             | ID           | Included |
-|------------------------------------------------------------|--------------|----------|
-| Mycobacterium tuberculosis                                 | NC_000962.3  | [x]      |
-| Influenza A H3N2 (such as A/Alabama/11/2017(H3N2))         |              | []       |
-| Influenza A H1N1 (such as A/Alaska/58/2017(H1N1))          |              | []       |
-| Influenza B (such as B/Yamagata/16/88 and B/Victoria/2/87) |              | []       |
-| Influenza C                                                |              | []       |
-| Influenza D                                                |              | []       |
-| Human parainfluenza virus type 1                           | HPIV-1 12730 | []       |
-| Human parainfluenza virus type 2                           | HPIV-2 11212 | []       |
-| Human parainfluenza virus type 3                           | HPIV-3 11216 | []       |
-| Human parainfluenza virus type 4                           | HPIV-4 11203 | []       |
-| Respiratory syncytial virus                                |              | []       |
-| Human metapneumovirus                                      |              | []       |
-| Rhinovirus/enterovirus                                     |              | []       |
-| Mycoplasma pneumoniae                                      |              | []       |
-| Chlamydophila pneumoniae                                   |              | []       |
+| Virus/pathogen                                             | ID          | Included |
+|------------------------------------------------------------|-------------|----------|
+| Mycobacterium tuberculosis                                 | NC_000962.3 | [x]      |
+| Human parainfluenza virus type 1                           | NC_003461   | [x]      |
+| Human parainfluenza virus type 2                           | NC_003443.1 | [x]      |
+| Human parainfluenza virus type 3                           | NC_001796   | [x]      |
+| Human parainfluenza virus type 4                           | NC_021928.1 | [x]      |
+| Influenza A H3N2          | taxid 335341          | []       | 
+| Influenza A H1N1 (such as A/Alaska/58/2017(H1N1))          |             | []       |
+| Influenza B (such as B/Yamagata/16/88 and B/Victoria/2/87) |             | []       |
+| Influenza C                                                |             | []       |
+| Influenza D                                                |             | []       |
+| Respiratory syncytial virus                                | NC_001803            | []       |
+| Human metapneumovirus                                      | NC_039199             | []       |
+| Rhinovirus/enterovirus                                     |             | []       |
+| Mycoplasma pneumoniae                                      | NZ_CP010546            | []       |
+| Chlamydophila pneumoniae                                   | NC_005043.1            | []       |
 
 __Probes are aligned against different host organisms__:
 
@@ -160,14 +160,16 @@ __IMPORTANT:__ if you add a new target region type, you have to update the path 
 
 #### Build local database from downloaded fasta sequences
 
-Databases for several genomes are provided. Databases were built with 
+FASTA files for different viruses/pathogens/beta-coronaviruses are provided.
 
-1. Build database from fasta for all corona-viruses (multi-fasta file): `makeblastdb -in beta-corona.fasta -dbtype nucl -title beta-corona -max_file_sz 500000 -parse_seqids`
-2. Build database from fasta for tuberculosis: `makeblastdb -in tuberculosis.fasta -dbtype nucl -title tuberculosis -max_file_sz 500000 -parse_seqids`
-3. Build database from fasta for cov-2: `makeblastdb -in cov-2.fasta -dbtype nucl -title cov-2 -max_file_sz 500000 -parse_seqids`
+__Important__: you have to buidl the databases on your local installation. 
+
+The general command is `makeblastdb -in beta-corona.fasta -dbtype nucl -title beta-corona -max_file_sz 500000 -parse_seqids`
 
 - The `-parse_seqids` option is required to keep the original sequence identifiers.
 - The `-max_file_sz` option helps to avoid an error under windows?
+
+Has to be performed for each of the genomes were a blast is desired.
 
 Build can provoke error messages under Windows. See misc below.
 
