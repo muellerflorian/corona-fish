@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 # %% Query probes
 
-path_probes = Path(Path.cwd() / '..' / 'data' / 'fasta' / 'Probes__cov-2').resolve()
+path_probes = Path(Path.cwd() / '..' / '..' / 'data' / 'fasta' / 'Probes__cov-2').resolve()
 file_results = path_probes / 'Probes__cov-2_ALL_with_blast.csv'
 probes_summary_load = pd.read_csv(file_results)
 

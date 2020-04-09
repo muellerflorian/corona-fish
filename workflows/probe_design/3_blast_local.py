@@ -19,7 +19,7 @@ db = path_genomes / 'cov-2' / 'cov-2.fasta'
 probe_designer.blast_probes(file_fasta, db, min_identity=0.75,  add_new_line=False)
 
 # Blast against other databases
-db_blast = [path_genomes / 'corona_family' / 'corona_family.fasta',
+db_blast = [path_genomes / 'beta-corona' / 'beta-corona.fasta',
             path_genomes / 'tuberculosis' / 'tuberculosis.fasta']
 
 blast_summary_list = []

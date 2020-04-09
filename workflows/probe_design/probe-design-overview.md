@@ -30,24 +30,49 @@ __Target__: **SARS-CoV-2** (NC_045512.2)
 
 Target regions are define in the file `data\Wuhan-Hu-1_2019__target_regions.tsv`. This can be the entire genome, or sub-regions.
 
-__Probe should be specific over Beta-Coronaviruses (SARS, MERS, HKU1, OC43, NL63, and 229E):__
+__Probe should be specific over other Coronaviruses:__
 
-- SARS (NC_004718.3): https://www.ncbi.nlm.nih.gov/nuccore/NC_004718.3?report=fasta
-- MERS (NC_019843.3): https://www.ncbi.nlm.nih.gov/nuccore/NC_019843.3?report=fasta
-- HKU1 (NC_006577.2): https://www.ncbi.nlm.nih.gov/nuccore/NC_006577.2?report=fasta  
-- OC43 (NC_006213.1): https://www.ncbi.nlm.nih.gov/nuccore/NC_006213.1
-- NL63 (JX504050.1): https://www.ncbi.nlm.nih.gov/nuccore/JX504050.1?report=fasta
-- 229E (NC_002645.1): https://www.ncbi.nlm.nih.gov/nuccore/NC_002645.1?report=fasta
+| beta-coronavirus | ID          | Included |
+|------------------|-------------|----------|
+| SARS             | NC_004718.3 | [x]      |
+| MERS             | NC_019843.3 | [x]      |
+| HKU1             | NC_006577.2 | [x]      |
+| OC43             | NC_006213.1 | [x]      |
+| NL63             | JX504050.1  | [x]      |
+| 229E             | NC_002645.1 | [x]      |
+
+`data\genomes\beta-corona`: genomes are stored in multi-fasta file, and blast databse build for it. 
 
 __Additional specifity requirements:__
 
-- Mycobacterium tuberculosis (NC_000962): https://www.ncbi.nlm.nih.gov/nuccore/NC_000962.3
-TODO: Influenza A:
-  
-__Probes are aligned against different organisms__:
+| Virus/pathogen                                             | ID           | Included |
+|------------------------------------------------------------|--------------|----------|
+| Mycobacterium tuberculosis                                 | NC_000962.3  | [x]      |
+| Influenza A H3N2 (such as A/Alabama/11/2017(H3N2))         |              | []       |
+| Influenza A H1N1 (such as A/Alaska/58/2017(H1N1))          |              | []       |
+| Influenza B (such as B/Yamagata/16/88 and B/Victoria/2/87) |              | []       |
+| Influenza C                                                |              | []       |
+| Influenza D                                                |              | []       |
+| Human parainfluenza virus type 1                           | HPIV-1 12730 | []       |
+| Human parainfluenza virus type 2                           | HPIV-2 11212 | []       |
+| Human parainfluenza virus type 3                           | HPIV-3 11216 | []       |
+| Human parainfluenza virus type 4                           | HPIV-4 11203 | []       |
+| Respiratory syncytial virus                                |              | []       |
+| Human metapneumovirus                                      |              | []       |
+| Rhinovirus/enterovirus                                     |              | []       |
+| Mycoplasma pneumoniae                                      |              | []       |
+| Chlamydophila pneumoniae                                   |              | []       |
 
-- human
-TODO: mouse, hamster, monkey, ...
+__Probes are aligned against different host organisms__:
+
+| host                 | teaxid | tested |
+|----------------------|--------|--------|
+| Home sapiens         | 9606   | [x]    |
+| African Green monkey | 60711  | []     |
+| Mus musculus         | 10090  | []     |
+| Hamsters             | 10026  | []     |
+| Ferret               | 9669   | []     |
+
 
 ## Probe-design workflow
 
@@ -137,7 +162,7 @@ __IMPORTANT:__ if you add a new target region type, you have to update the path 
 
 Databases for several genomes are provided. Databases were built with 
 
-1. Build database from fasta for all corona-viruses (multi-fasta file): `makeblastdb -in corona_family.fasta -dbtype nucl -title corona-family`
+1. Build database from fasta for all corona-viruses (multi-fasta file): `makeblastdb -in beta-corona.fasta -dbtype nucl -title beta-corona -max_file_sz 500000 -parse_seqids`
 2. Build database from fasta for tuberculosis: `makeblastdb -in tuberculosis.fasta -dbtype nucl -title tuberculosis -max_file_sz 500000 -parse_seqids`
 3. Build database from fasta for cov-2: `makeblastdb -in cov-2.fasta -dbtype nucl -title cov-2 -max_file_sz 500000 -parse_seqids`
 
