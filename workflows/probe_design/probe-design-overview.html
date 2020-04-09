@@ -2,8 +2,7 @@
 <ul>
 <li><a href="#probe-design-for-cov-2">Probe-design for COV-2</a>
 <ul>
-<li><a href="#general-considerations">General considerations</a></li>
-<li><a href="#target-region-analysis">Target region analysis</a></li>
+<li><a href="#overview">Overview</a></li>
 <li><a href="#probe-design-workflow">Probe-design workflow</a>
 <ul>
 <li><a href="#1-create-fasta-file-python">1. Create fasta file [Python]</a>
@@ -20,19 +19,17 @@
 <li><a href="#workflow-2">Workflow</a></li>
 </ul></li>
 <li><a href="#4blast-sequence-against-human-transcriptome">4.Blast sequence against human transcriptome</a></li>
-<li><a href="#5-combine-results">5. Combine results</a>
+<li><a href="#5-combine-blast-results">5. Combine blast results</a>
 <ul>
 <li><a href="#workflow-3">Workflow</a></li>
 </ul></li>
-<li><a href="#4-blast-sequence-against-human-transcriptome">4. Blast sequence against human transcriptome</a></li>
-<li><a href="#5-query-probes">5. Query probes</a>
+<li><a href="#6-query-probes">6. Query probes</a>
 <ul>
 <li><a href="#workflow-4">Workflow</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#additional-information">Additional information</a>
 <ul>
-<li><a href="#ressources">Ressources</a></li>
 <li><a href="#blast">Blast</a>
 <ul>
 <li><a href="#windows">Windows</a></li>
@@ -44,8 +41,9 @@
 </ul></li>
 </ul></li>
 </ul>
-<h2 id="general-considerations">General considerations</h2>
+<h2 id="overview">Overview</h2>
 <p><strong>Target</strong>: <strong>SARS-CoV-2</strong> (NC_045512.2) Sequence of viruse stored in <code>data\Wuhan-Hu-1_2019.gb</code></p>
+<p>Target regions are define in the file <code>data\Wuhan-Hu-1_2019__target_regions.tsv</code>. This can be the entire genome, or sub-regions.</p>
 <p><strong>Probe should be specific over Beta-Coronaviruses (SARS, MERS, HKU1, OC43, NL63, and 229E):</strong></p>
 <ul>
 <li>SARS (NC_004718.3): https://www.ncbi.nlm.nih.gov/nuccore/NC_004718.3?report=fasta</li>
@@ -58,32 +56,31 @@
 </ul>
 <p><strong>Additional specifity requirements:</strong></p>
 <ul>
-<li>Mycobacterium tuberculosis (NC_000962): https://www.ncbi.nlm.nih.gov/nuccore/NC_000962.3</li>
+<li>Mycobacterium tuberculosis (NC_000962): https://www.ncbi.nlm.nih.gov/nuccore/NC_000962.3 TODO: Influenza A:</li>
 </ul>
-<p><strong>Not sure where to get this ones</strong>:</p>
+<p><strong>Probes are aligned against different organisms</strong>:</p>
 <ul>
-<li>Influenza A: not sure what sequence to use</li>
-<li>Betacoronavirus 1: when I search for this, I get OC43</li>
+<li>human TODO: mouse, hamster, monkey, …</li>
 </ul>
-<h2 id="target-region-analysis">Target region analysis</h2>
-<p>Performed by the lab of Etienne Simon Loriere.</p>
-<p>Results are provided as a text file <code>data\Wuhan-Hu-1_2019_potential_target_regions.tsv</code> indicating start/end coordinates of</p>
-<ol type="1">
-<li><strong>Primer regions</strong> used in qPCR test</li>
-<li><strong>Potential target regions</strong></li>
-</ol>
-<p>I added two more regions 3. <strong>Spike clyco protein encoding region</strong> 4. <strong>Entire genome</strong></p>
 <h2 id="probe-design-workflow">Probe-design workflow</h2>
 <h3 id="create-fasta-file-python">1. Create fasta file [Python]</h3>
-<p>Takes the file with the target regions, extracts their sequences, and creates a separate fasta file for primers, and target regions.</p>
-<p><strong>Note</strong>: fasta file names, seqquence ids or description should <strong>NOT</strong> contain underscores. In Oligostan, underscores are used to split string to extract some meta-data.</p>
+<p>Takes the file with the target regions, extracts their sequences, and creates a separate fasta file for each target region type. If several sequences are defined for a target regions type, the script will create a multi-fasta file, e.g.  multiple fasta entries in one file,</p>
+<p><strong>Note</strong>: fasta file names, sequence ids or description should <strong>NOT</strong> contain underscores. In Oligostan, underscores are used to split string to extract some meta-data.</p>
 <h4 id="workflow">Workflow</h4>
 <p><strong>Function</strong>: <code>probe_design\1_create_fasta_of_target_region.py</code></p>
 <p><strong>Input</strong>:</p>
 <ol type="1">
 <li><code>data\Wuhan-Hu-1_2019.gb</code></li>
-<li><code>data\Wuhan-Hu-1_2019_potential_target_regions.tsv</code></li>
+<li><code>data\Wuhan-Hu-1_2019_potential_target_regions.tsv</code> Different region types can be defined as well if needed (specified by the name in the first column). Currently supported are
+<ul>
+<li><code>cov-2</code></li>
+<li><code>spike-glycoprotein</code></li>
+<li><code>target-region</code></li>
+<li><code>primer-region</code></li>
+</ul></li>
 </ol>
+<p>For a new region type, several target ranges (specified by their start and end position) can be specified.</p>
+<p>If you define a new region type, the Python script <code>1_create_fasta_of_target_region.py</code> to take new entry types into considerations.</p>
 <p><strong>Output</strong>:</p>
 <ol type="1">
 <li><code>data\Wuhan-Hu-1_2019.gb</code></li>
@@ -91,14 +88,16 @@
 </ol>
 <h3 id="design-probes-r">2. Design probes [R]</h3>
 <p>We use Oligostan for <a href="https://www.ncbi.nlm.nih.gov/pubmed/27599845">probe-design</a>.</p>
+<p>See also the provided document <code>workflows\probe_design\Oligostan_documentation.doc</code> for more details.</p>
+<p><strong>IMPORTANT</strong>: in the probe design script you have to update the path to the fasta sequence (line 8).</p>
 <ul>
-<li>Runs in <strong>R</strong> as a script.</li>
+<li>Runs in <strong>R</strong> as a script, which designs probes against the fasta sequences created in step 1.</li>
 <li>Requires installation of some extra packages: <code>install.packages(c("ade4", "seqinr", "zoo"))</code></li>
 <li>Takes <strong>fasta files</strong> as an input.
 <ul>
 <li>Multi-fasta is supported.</li>
 <li>File-names, sequence ids or description can NOT contain underscores</li>
-<li>When specifying path names under windows, <code>\</code> has to be replaced by <code>/</code></li>
+<li>When specifying path names under Windows, <code>\</code> has to be replaced by <code>/</code></li>
 </ul></li>
 </ul>
 <h4 id="workflow-1">Workflow</h4>
@@ -108,10 +107,12 @@
 <li><code>data\Wuhan-Hu-1_2019.gb</code></li>
 <li><code>data\Wuhan-Hu-1_2019_potential_target_regions.tsv</code></li>
 </ol>
+<p><strong>Output</strong>: Will create a folder <code>data\fasta\Probes__annotation-name</code>, where <code>region-name</code> is the name of the regions given in step 1, e.g. <code>cov-2</code> when the annotated region was the default region covering the entire genome.</p>
+<p>Contains a fasta file and a summary text file for all probes identified (<code>ALL</code>), and the probes passing the specified filters (<code>FILT</code>).</p>
 <h3 id="blast-sequences-local-databases">3. Blast sequences: LOCAL databases</h3>
-<p>Local blast. Requires command line tools and Python packages</p>
+<p>Perform local blast against several reference genomes.</p>
+<p><strong>IMPORTANT:</strong> if you add a new target region type, you have to update the path pointing to the create probe regions in step 2.</p>
 <ul>
-<li>BioPython</li>
 <li>Local version of blast + databases being installed.</li>
 <li>Some more information
 <ul>
@@ -128,10 +129,10 @@
 <li>Local databases can be build for alignment against any fasta sequence.</li>
 </ul>
 <h4 id="build-local-database-from-downloaded-fasta-sequences">Build local database from downloaded fasta sequences</h4>
-<p>FASTA sequence for all other coronaviruses are truncated together as a multi-fasta file.</p>
+<p>Databases for several genomes are provided. Databases were built with</p>
 <ol type="1">
 <li>Build database from fasta for all corona-viruses (multi-fasta file): <code>makeblastdb -in corona_family.fasta -dbtype nucl -title corona-family</code></li>
-<li>Build database from fasta for cov-2: <code>makeblastdb -in tuberculosis.fasta -dbtype nucl -title tuberculosis -max_file_sz 500000 -parse_seqids</code></li>
+<li>Build database from fasta for tuberculosis: <code>makeblastdb -in tuberculosis.fasta -dbtype nucl -title tuberculosis -max_file_sz 500000 -parse_seqids</code></li>
 <li>Build database from fasta for cov-2: <code>makeblastdb -in cov-2.fasta -dbtype nucl -title cov-2 -max_file_sz 500000 -parse_seqids</code></li>
 </ol>
 <ul>
@@ -140,7 +141,6 @@
 </ul>
 <p>Build can provoke error messages under Windows. See misc below.</p>
 <h4 id="workflow-2">Workflow</h4>
-<p>probe_design_probe_sequences.py</p>
 <p><strong>Function</strong>: <code>probe_design\3_blast_local.py</code></p>
 <p><strong>Input</strong>:</p>
 <ol type="1">
@@ -153,34 +153,32 @@
 </ol>
 <h3 id="blast-sequence-against-human-transcriptome">4.Blast sequence against human transcriptome</h3>
 <ol type="1">
-<li>blastn website</li>
-<li>drag multi-fasta file with all sequences</li>
-<li>Download results as hit file (csv).</li>
+<li>Blast website: https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch</li>
+<li>Drag multi-fasta file with all sequences</li>
+<li>Define blast search of interest</li>
+<li>Download results as hit file (csv). We performed blast against
+<ol type="1">
+<li>Human: <code>blastn_human_transcriptome.csv</code></li>
+</ol></li>
 </ol>
-<h3 id="combine-results">5. Combine results</h3>
-<p>Results are combined: details of probe design and fasta results.</p>
+<h3 id="combine-blast-results">5. Combine blast results</h3>
+<p>Results of all blast searches are combined, and a summary files with details of probe design and the blast results created.</p>
 <h4 id="workflow-3">Workflow</h4>
-<p><strong>Function</strong>: <code>probe_design\4_blast_combine.py</code></p>
+<p><strong>Function</strong>: <code>probe_design\5_blast_combine.py</code></p>
 <p><strong>Input</strong>:</p>
 <ol type="1">
-<li>Fasta files from local search</li>
-<li>Fasta files from web search</li>
+<li>Fasta files from local search.</li>
+<li>Fasta files from web search.</li>
 </ol>
 <p><strong>Output</strong>:</p>
 <ol type="1">
-<li>csv file with all information of probes</li>
+<li>csv file with all information of probes.</li>
 <li>Some plots showing mismatch distribution.</li>
 </ol>
-<h3 id="blast-sequence-against-human-transcriptome-1">4. Blast sequence against human transcriptome</h3>
-<ol type="1">
-<li>blastn website</li>
-<li>drag multi-fasta file with all sequences</li>
-<li>Download results as hit file (csv).</li>
-</ol>
-<h3 id="query-probes">5. Query probes</h3>
+<h3 id="query-probes">6. Query probes</h3>
 <p>Results as pandas dataframe. Query probes</p>
 <h4 id="workflow-4">Workflow</h4>
-<p><strong>Function</strong>: <code>probe_design\5_probes_query.py</code></p>
+<p><strong>Function</strong>: <code>probe_design\6_probes_query.py</code></p>
 <p><strong>Input</strong>:</p>
 <ol type="1">
 <li>Summary csv files</li>
@@ -191,10 +189,6 @@
 <li>Plot with distribution of probes along sequence.</li>
 </ol>
 <h2 id="additional-information">Additional information</h2>
-<h3 id="ressources">Ressources</h3>
-<ul>
-<li><strong>European Bioinformatics Institute</strong>: https://www.ebi.ac.uk/Tools/</li>
-</ul>
 <h3 id="blast">Blast</h3>
 <h4 id="windows">Windows</h4>
 <p>Installed under <code>C:\Program Files\NCBI\blast-2.10.0+</code></p>
