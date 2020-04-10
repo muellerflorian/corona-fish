@@ -1,5 +1,5 @@
 
-# TODO: include missing blasts (Mycobacterium tuberculosis, Influenza A)
+
 # TODO: important or not to include genetic variability within virus?
 
 # %% Imports
@@ -56,3 +56,6 @@ for blast_add in blast_all:
 # >>> Save file to csv
 file_save = path_probes / 'Probes__cov-2_ALL__with_blast.csv'
 probes_summary_joined.fillna('NAN').to_csv(file_save, sep=',')   
+
+
+# %%

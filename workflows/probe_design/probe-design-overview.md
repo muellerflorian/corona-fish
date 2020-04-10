@@ -45,26 +45,34 @@ __Probe should be specific over other Coronaviruses:__
 
 __Additional specifity requirements:__
 
-| Virus/pathogen                                             | ID           | Included |
-|------------------------------------------------------------|--------------|----------|
-| Mycobacterium tuberculosis                                 | NC_000962.3  | [x]      |
-| Human parainfluenza virus type 1                           | NC_003461    | [x]      |
-| Human parainfluenza virus type 2                           | NC_003443.1  | [x]      |
-| Human parainfluenza virus type 3                           | NC_001796    | [x]      |
-| Human parainfluenza virus type 4                           | NC_021928.1  | [x]      |
-| Respiratory syncytial virus                                | NC_001803    | [x]      |
-| Human metapneumovirus                                      | NC_039199    | [x]      |
-| Mycoplasma pneumoniae                                      | NZ_CP010546  | [x]      |
-| Chlamydophila pneumoniae                                   | NC_005043.1  | [x]      |
-| Influenza A H3N2                                           | taxid 335341 | []       |
-| Influenza A H1N1 (such as A/Alaska/58/2017(H1N1))          |              | []       |
-| Influenza B (such as B/Yamagata/16/88 and B/Victoria/2/87) |              | []       |
-| Influenza C                                                |              | []       |
-| Influenza D                                                |              | []       |
-| Rhinovirus/enterovirus                                     |              | []       |
+| Virus/pathogen                                             | ID               | Included |
+|------------------------------------------------------------|------------------|----------|
+| Mycobacterium tuberculosis                                 | NC_000962.3      | [x]      |
+| Human parainfluenza virus type 1                           | NC_003461        | [x]      |
+| Human parainfluenza virus type 2                           | NC_003443.1      | [x]      |
+| Human parainfluenza virus type 3                           | NC_001796        | [x]      |
+| Human parainfluenza virus type 4                           | NC_021928.1      | [x]      |
+| Respiratory syncytial virus                                | NC_001803        | [x]      |
+| Human metapneumovirus                                      | NC_039199        | [x]      |
+| Mycoplasma pneumoniae                                      | NZ_CP010546      | [x]      |
+| Chlamydophila pneumoniae                                   | NC_005043.1      | [x]      |
+| Influenza A H3N2                                           |                  | [x]      |
+| Influenza A H1N1 (such as A/Alaska/58/2017(H1N1))          | txid2043069      | [x]      |
+| Influenza B (such as B/Yamagata/16/88 and B/Victoria/2/87) | txid416674       | [x]      |
+| Influenza C                                                | GCF_000856665.10 | [x]      |
+| Influenza D                                                | GCF_002867775.1  | [x]      |
+| Rhinovirus/enterovirus                                     | NC_038312.1      | [x]      |
 
 `data\genomes\viruses`: each genomes is stored separately.
 
+__some urls__ for the segmented viruses, I checked for the Taxonomy entries and then downloaded
+the coding squences.
+
+- H1N1: https://www.ncbi.nlm.nih.gov/nuccore/?term=txid2043069[Organism:noexp]
+- Influenza B: https://www.ncbi.nlm.nih.gov/nuccore/?term=txid416674[Organism:noexp]
+- Influenza C: reference genome: https://www.ncbi.nlm.nih.gov/nuccore/1250175392,1250175391,1250175390,1250175389,1250175388,211910015,52630357  
+- Influenza D: https://www.ncbi.nlm.nih.gov/nuccore/1328406502,1328406500,1328406498,1328406496,1328406494,1328406492,1328406490
+  
 __Probes are aligned against different host organisms__:
 
 | host                 | taxid | tested |
