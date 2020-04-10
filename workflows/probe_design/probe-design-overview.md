@@ -41,7 +41,7 @@ __Probe should be specific over other Coronaviruses:__
 | NL63             | JX504050.1  | [x]      |
 | 229E             | NC_002645.1 | [x]      |
 
-`data\genomes\beta-corona`: genomes are stored in multi-fasta file, and blast databse build for it. 
+`data\genomes\beta-corona`: genomes are stored in multi-fasta file, and blast databse build for it.
 
 __Additional specifity requirements:__
 
@@ -63,15 +63,17 @@ __Additional specifity requirements:__
 | Influenza D                                                |              | []       |
 | Rhinovirus/enterovirus                                     |              | []       |
 
+`data\genomes\viruses`: each genomes is stored separately.
+
 __Probes are aligned against different host organisms__:
 
 | host                 | taxid | tested |
 |----------------------|-------|--------|
 | Home sapiens         | 9606  | [x]    |
-| Mus musculus         | 10090 | [x]     |
-| African Green monkey | 60711 | [x]     |
-| Hamsters             | 10026 | [x]     |
-| Ferret               | 9669  | []     |
+| Mus musculus         | 10090 | [x]    |
+| African Green monkey | 60711 | [x]    |
+| Hamsters             | 10026 | [x]    |
+| Ferret               | 9669  | [x]    |
 
 ## Probe-design workflow
 

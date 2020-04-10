@@ -173,7 +173,7 @@ def summarize_XML(file_xml, flag_print=False):
 
 def write_summary_csv(file_name, blast_summary, min_identity = 0.7, add_new_line=False):
     """[summary]
-    
+
     Parameters
     ----------
     file_name : [type]
@@ -194,7 +194,7 @@ def write_summary_csv(file_name, blast_summary, min_identity = 0.7, add_new_line
         writer.writerow(('query_id', 'query_title', 'query_length', 'alignment_length', 'hsp_identities',
                             'hsp_gaps', 'category', 'alignment_title', 'hsp_score', 'hsp_expect'))
         current_query = ''
-        
+
         # Read row by row, add empty row after new target sequence
         for b in blast_summary:
             new_line_to_add = False
@@ -203,7 +203,7 @@ def write_summary_csv(file_name, blast_summary, min_identity = 0.7, add_new_line
                     writer.writerow('')
                     new_line_to_add = True
                     current_query = b[0]
-                
+
             if b[3]/b[2] > min_identity:
                 if new_line_to_add:
                     writer.writerow('')
@@ -226,7 +226,8 @@ def blast_probes(file_fasta, db, min_identity=0.7, add_new_line=False):
 
     # Perform blast 
     blastn_cline = NcbiblastnCommandline(query=file_fasta,
-                                        db= db,
+                                        db=db,
+                                        strand='both',
                                         evalue=5,
                                         outfmt=outfmt,
                                         out=file_save,
