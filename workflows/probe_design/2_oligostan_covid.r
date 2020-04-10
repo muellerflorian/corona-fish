@@ -67,11 +67,11 @@ setwd(FileNameOutput)
 
 
 # Create file names
-paste(FileNameOutput,"_FILT",".txt",collapse="",sep="") -> ResultFileName
-paste(FileNameOutput,"_ALL",".txt",collapse="",sep="")  -> RawProbesFileName
+paste(FileNameOutput,"_FILT_summary",".txt",collapse="",sep="") -> ResultFileName
+paste(FileNameOutput,"_ALL_summary",".txt",collapse="",sep="")  -> RawProbesFileName
 
-paste(FileNameOutput,"_FILT_summary",".fasta",collapse="",sep="") -> ResultFastaSummaryFileName
-paste(FileNameOutput,"_ALL_summary",".fasta",collapse="",sep="")  -> RawProbesFastaSummaryFileName
+paste(FileNameOutput,"_FILT",".fasta",collapse="",sep="") -> ResultFastaSummaryFileName
+paste(FileNameOutput,"_ALL",".fasta",collapse="",sep="")  -> RawProbesFastaSummaryFileName
 
 
 getGandTInfosFromFastaReads <- function(FastaFile){

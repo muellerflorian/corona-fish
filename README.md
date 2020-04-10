@@ -15,7 +15,7 @@ The provided code uses **Python** and **R**.
 
 * For Python, we recommend installing [**Miniconda** with Python](https://docs.conda.io/en/latest/miniconda.html):
 choose Python 3.7 and your operating system.
-* For R, we recommend installing [**R**](https://www.r-project.org/) and the free versio of [RStudio Desktop](https://rstudio.com/products/rstudio/download/). 
+* For R, we recommend installing [**R**](https://www.r-project.org/) and the free versio of [RStudio Desktop](https://rstudio.com/products/rstudio/download/).
 
 ### Python 
 Most of the provide code runs under python. 
@@ -41,6 +41,5 @@ conda activate cov-fish
 ## Workflows
 
 ### Probe-design
-
 The file `workflows\probe_design\probe-design-overview.html` contains a detailed description 
 of the different steps in the analysis workflow.

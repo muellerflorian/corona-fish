@@ -1,16 +1,115 @@
 
 # Imports
-from Bio.Blast import NCBIWWW, NCBIXML
+from Bio.Blast import NCBIXML
 from Bio.Blast.Applications import NcbiblastnCommandline
 import csv
 from operator import itemgetter
-from pathlib import Path
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import json
+
+
+# %% Read blasts
+def blast_summarize(path_blast, file_identifier, sep, ext, path_results, refseq_keep=None):
+    """[summary]
+
+    Parameters
+    ----------
+    path_blast : pathlib object
+        Path to folder containg blast search results.
+    file_identifier : pathlib object
+        Full file name of json file with identifiers for blast search
+    sep : str
+        Column separator in blast hit file
+    ext: str
+        File extension of blast hit file
+    path_results : pathlib object
+        Where to store results
+    refseq_keep : list of str
+        Refseq entries that should be kept
+
+    Returns
+    -------
+    [list]
+        List of panda dataframes with best blast hits.
+    """
+
+    # Column names of blast hit file
+    names_col = ['qseqid', 'sseqid', 'pident', 'length', 'mismatch', 'gapopen', 'qstart', 'qend', 'sstart', 'hsend', 'evalue', 'bitscore']
+
+
+    # Check if folder exists
+    if not path_blast.is_dir():
+        print(f'Folder with blast results not found {path_blast}')
+
+    # Open file-idenifiers for blast searches
+    with open(file_identifier, 'r') as fp:
+        blast_name_identifier = json.load(fp)
+
+    # >> Web blast
+    blast_all = []
+    for file_blast in path_blast.glob(f'*.{ext}'):
+        print(f'Reading blast results: {file_blast}')
+        file_name = file_blast.name
+
+        # Internet blast against human  (separator is ')
+        blast_results = pd.read_csv(file_blast, sep=sep, header=None, names=names_col)
+
+        # Keep only transcripts
+        if refseq_keep:
+            blast_results = blast_results[blast_results.sseqid.str.contains('|'.join(refseq_keep))]
+
+        # Keep only top hits
+        df_sorted = blast_results.sort_values(by='bitscore')
+        best_blast_hits = df_sorted.drop_duplicates('qseqid', keep='last').sort_index(0)
+
+        # Rename columns
+        if not (file_name in blast_name_identifier):
+            ident = file_blast.stem
+            print(f'No identifier for result file  {file_name} found. Will use file stem {ident} instead.')
+            
+        else:
+            ident = blast_name_identifier[file_name]
+
+        # Plot results of mismatches
+        if len(best_blast_hits) > 0:
+            file_save = path_results / f'blast_{ident}_mismatch.png'
+            hexplot = sns.jointplot("length", "mismatch", data=best_blast_hits, kind="hex")       
+            plt.subplots_adjust(left=0.2, right=0.8, top=0.8, bottom=0.2)  # shrink fig so cbar is visible
+            cbar_ax = hexplot.fig.add_axes([.85, .25, .05, .4])  # x, y, width, height
+            plt.colorbar(cax=cbar_ax)
+            plt.savefig(file_save, dpi=300)
+            plt.close()
+        else:
+            print('No blast hits for this search')
+
+        # Rename columns
+        best_blast_hits.rename(columns={'sseqid': f'{ident}_sseqid',
+                                        'pident': f'{ident}_pident',
+                                        'length': f'{ident}_length',
+                                        'mismatch': f'{ident}_mismatch',
+                                        'gapopen': f'{ident}_gapopen',
+                                        'qstart': f'{ident}_qstart',
+                                        'qend': f'{ident}_qend',
+                                        'sstart': f'{ident}_sstart',
+                                        'hsend': f'{ident}_hsend',
+                                        'evalue': f'{ident}_evalue',
+                                        'bitscore': f'{ident}_bitscore'
+                                        },
+                               inplace=True)
+
+        # Add results
+        blast_all.append(best_blast_hits)
+
+    return blast_all
+
 
 # Function definition to summarize results
 def summarize_XML(file_xml, flag_print=False):
     ''' 
     Summarize results of a blast search stored in a xml file 
-    
+
     High-scoring Segment Pair (HSP) class: https://biopython.org/DIST/docs/api/Bio.Blast.Record.HSP-class.html
     '''
     blast_summary = []
@@ -114,21 +213,18 @@ def write_summary_csv(file_name, blast_summary, min_identity = 0.7, add_new_line
 # Blast list of probes against local db
 def blast_probes(file_fasta, db, min_identity=0.7, add_new_line=False):
 
-    path_save = file_fasta.parents[0] / 'blast'
+    path_save = file_fasta.parents[0] / 'blast' / 'local'
     if not path_save.is_dir():
         path_save.mkdir()
-        
+
     # Define function call
     db_name = db.stem
-    
-    # For xml format
-    #outfmt = 5 
-    #file_save = path_save / f'{db_name}.xml'
-    
+
     # Tabular format
     outfmt = 6
-    file_save =  path_save / f'{db_name}.txt'
-    
+    file_save = path_save / f'{db_name}.txt'
+
+    # Perform blast 
     blastn_cline = NcbiblastnCommandline(query=file_fasta,
                                         db= db,
                                         evalue=5,

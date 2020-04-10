@@ -45,34 +45,33 @@ __Probe should be specific over other Coronaviruses:__
 
 __Additional specifity requirements:__
 
-| Virus/pathogen                                             | ID          | Included |
-|------------------------------------------------------------|-------------|----------|
-| Mycobacterium tuberculosis                                 | NC_000962.3 | [x]      |
-| Human parainfluenza virus type 1                           | NC_003461   | [x]      |
-| Human parainfluenza virus type 2                           | NC_003443.1 | [x]      |
-| Human parainfluenza virus type 3                           | NC_001796   | [x]      |
-| Human parainfluenza virus type 4                           | NC_021928.1 | [x]      |
-| Influenza A H3N2          | taxid 335341          | []       | 
-| Influenza A H1N1 (such as A/Alaska/58/2017(H1N1))          |             | []       |
-| Influenza B (such as B/Yamagata/16/88 and B/Victoria/2/87) |             | []       |
-| Influenza C                                                |             | []       |
-| Influenza D                                                |             | []       |
-| Respiratory syncytial virus                                | NC_001803            | []       |
-| Human metapneumovirus                                      | NC_039199             | []       |
-| Rhinovirus/enterovirus                                     |             | []       |
-| Mycoplasma pneumoniae                                      | NZ_CP010546            | []       |
-| Chlamydophila pneumoniae                                   | NC_005043.1            | []       |
+| Virus/pathogen                                             | ID           | Included |
+|------------------------------------------------------------|--------------|----------|
+| Mycobacterium tuberculosis                                 | NC_000962.3  | [x]      |
+| Human parainfluenza virus type 1                           | NC_003461    | [x]      |
+| Human parainfluenza virus type 2                           | NC_003443.1  | [x]      |
+| Human parainfluenza virus type 3                           | NC_001796    | [x]      |
+| Human parainfluenza virus type 4                           | NC_021928.1  | [x]      |
+| Respiratory syncytial virus                                | NC_001803    | [x]      |
+| Human metapneumovirus                                      | NC_039199    | [x]      |
+| Mycoplasma pneumoniae                                      | NZ_CP010546  | [x]      |
+| Chlamydophila pneumoniae                                   | NC_005043.1  | [x]      |
+| Influenza A H3N2                                           | taxid 335341 | []       |
+| Influenza A H1N1 (such as A/Alaska/58/2017(H1N1))          |              | []       |
+| Influenza B (such as B/Yamagata/16/88 and B/Victoria/2/87) |              | []       |
+| Influenza C                                                |              | []       |
+| Influenza D                                                |              | []       |
+| Rhinovirus/enterovirus                                     |              | []       |
 
 __Probes are aligned against different host organisms__:
 
-| host                 | teaxid | tested |
-|----------------------|--------|--------|
-| Home sapiens         | 9606   | [x]    |
-| African Green monkey | 60711  | []     |
-| Mus musculus         | 10090  | []     |
-| Hamsters             | 10026  | []     |
-| Ferret               | 9669   | []     |
-
+| host                 | taxid | tested |
+|----------------------|-------|--------|
+| Home sapiens         | 9606  | [x]    |
+| Mus musculus         | 10090 | [x]     |
+| African Green monkey | 60711 | [x]     |
+| Hamsters             | 10026 | [x]     |
+| Ferret               | 9669  | []     |
 
 ## Probe-design workflow
 
@@ -140,9 +139,10 @@ Contains a fasta file and a summary text file for all probes identified (`ALL`),
 
 ### 3. Blast sequences: LOCAL databases
 
-Perform local blast against several reference genomes.
+Perform local blast against several reference genomes. Results are stored as blast hit files with output format 6
+(http://www.metagenomics.wiki/tools/blast/blastn-output-format-6).
 
-__IMPORTANT:__ if you add a new target region type, you have to update the path pointing to the create probe regions in step 2.
+__IMPORTANT__: you have to build the databases on your local installation (see below).
 
 - Local version of blast + databases being installed.
 - Some more information
@@ -162,8 +162,6 @@ __IMPORTANT:__ if you add a new target region type, you have to update the path 
 
 FASTA files for different viruses/pathogens/beta-coronaviruses are provided.
 
-__Important__: you have to buidl the databases on your local installation. 
-
 The general command is `makeblastdb -in beta-corona.fasta -dbtype nucl -title beta-corona -max_file_sz 500000 -parse_seqids`
 
 - The `-parse_seqids` option is required to keep the original sequence identifiers.
@@ -179,24 +177,29 @@ __Function__: `probe_design\3_blast_local.py`
 
 __Input__:
 
-1. Fasta files with probe sequences
-2. Local blastn databases
+1. Fasta files with probe sequences: `data\fasta\Probes__cov-2\Probes__cov-2_ALL.fasta`
+2. Local blastn databases: `data\genomes\`
 
 __Output__:
 
-1. Blast hit files. http://www.metagenomics.wiki/tools/blast/blastn-output-format-6
+1. Blast hit files for each data-basesstored in `\data\fasta\Probes__cov-2\blast\local`
 
 ### 4.Blast sequence against human transcriptome
 
-1. Blast website: https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch
-2. Drag multi-fasta file with all sequences
-3. Define blast search of interest
-4. Download results as hit file (csv). We performed blast against
-   1. Human: `blastn_human_transcriptome.csv`
+1. [Blast website](htps://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch)
+2. **Enter query sequence**: Upload file with probe sequences**: `data\fasta\Probes__cov-2\Probes__cov-2_ALL.fasta`
+3. **Choose Search Set**:
+   1. `Database`: `Standard databases (nr etc.)`
+   2. `Organism`: add taxid of host organism
+4. **Program Selection**: `Somewhat similar sequences`
+5. Perform Blast.
+6. **Download results** as hit file (csv). We performed blast against
 
 ### 5. Combine blast results
 
 Results of all blast searches are combined, and a summary files with details of probe design and the blast results created.
+
+The file `data\blast_identifiers.json` permits to specify an identifier for a blast search. If absent, the file-name will be used.
 
 #### Workflow
 
@@ -294,7 +297,17 @@ For example with tabular output file blast-out.b6:
 
 Starting point: https://www.biostars.org/p/129932/
 
+qblast will accept fasta or a single sequence. 
+
 ``` python
 from Bio.Blast import NCBIWWW
 result_handle = NCBIWWW.qblast("blastn", "nt", some_sequence)
 ```
+
+refseq_rna as a database ... 
+
+https://www.biostars.org/p/58457/
+
+NCBIWWW.qblast(program="blastn", database="refseq_genomic", sequence=input_sequence, entrez_query="txid7227[ORGN]")
+
+
