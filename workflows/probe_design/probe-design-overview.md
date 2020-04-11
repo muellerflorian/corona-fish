@@ -30,6 +30,9 @@ __Target__: **SARS-CoV-2** (NC_045512.2)
 
 Target regions are define in the file `data\Wuhan-Hu-1_2019__target_regions.tsv`. This can be the entire genome, or sub-regions.
 
+Identified probes are also blasted against >2000 aligned COV-2 genomes, and only probes
+with 0 or 1 mismatches for >98% of those genomes are used.
+
 __Probe should be specific over other Coronaviruses:__
 
 | beta-coronavirus | ID          | Included |

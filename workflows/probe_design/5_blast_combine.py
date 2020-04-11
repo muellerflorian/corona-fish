@@ -6,6 +6,9 @@
 from pathlib import Path
 import pandas as pd
 from covfish import probe_designer
+import seaborn as sns
+import numpy as np
+import matplotlib.pyplot as plt
 import importlib
 
 
@@ -39,8 +42,31 @@ blast_local_all = probe_designer.blast_summarize(path_blast=path_blast / 'local'
                                 path_results=path_results, 
                                 refseq_keep=None)
 
+#  >>> import blast against cov-2 alignment
 
-# %% Read probe summary and add other blast results
+# Count how many genoems (identified by >)
+file_cov = path_data / 'genomes' / 'cov2_aligned' / 'cov2_aligned.fasta'
+genomes_cov2 = file_cov.read_text()
+n_genomes = genomes_cov2.count('>')
+
+# Open blast results
+names_col = ['qseqid', 'sseqid', 'qlen', 'pident', 'length', 'mismatch', 'gapopen', 'qstart', 'qend', 'sstart', 'hsend', 'evalue', 'bitscore']
+file_blast = path_blast / 'local_cov2' / 'cov2_aligned.txt'
+blast_results = pd.read_csv(file_blast, sep='\t', header=None, names=names_col)
+blast_results['align_diff'] = blast_results['qlen'] - blast_results['length'] + blast_results['mismatch'] 
+
+# Simplify df
+blast_results = blast_results.filter(items=['qseqid', 'sseqid', 'align_diff'])
+# Remove potential duplicates and only heep the ones with highest alignment difference
+blast_results.sort_values('align_diff', ascending=False).drop_duplicates(['qseqid','sseqid'], inplace=True)
+# Keep only blast hits with 0 or 1 mismatch over the entire probe sequence
+blast_covid_alignment = blast_results.query('align_diff <=1').groupby('qseqid').count()
+blast_covid_alignment['align_diff'] = blast_covid_alignment['align_diff'] * 100.0 / n_genomes
+blast_covid_alignment.rename(columns={'sseqid': f'cov2-align-N-{n_genomes}',
+                                      'align_diff': f'cov2-align-perc'}
+                             ,inplace=True)
+
+# >>>>  Read probe summary and add other blast results
 
 # >>>  DF with probe list
 file_summary = path_probes / 'Probes__cov-2_ALL_summary.txt'
@@ -49,13 +75,33 @@ probes_summary['qseqid'] = probes_summary['ProbesNames'] + '--' + probes_summary
 
 # >>> Loop over all blast results and join 
 probes_summary_joined = probes_summary
-blast_all = blast_web_all + blast_local_all 
+blast_all = [blast_covid_alignment] + blast_web_all + blast_local_all 
 for blast_add in blast_all:
     probes_summary_joined = pd.merge(left=probes_summary_joined, right=blast_add, how='left', left_on='qseqid', right_on='qseqid')
 
 # >>> Save file to csv
 file_save = path_probes / 'Probes__cov-2_ALL__with_blast.csv'
 probes_summary_joined.fillna('NAN').to_csv(file_save, sep=',')   
+probes_summary_joined.to_csv(file_save, sep=',')   
 
 
+# %% Plot results of alignment against cov-2
+
+# >>> Number of probe squences that match well all consensus sequences
+plt.figure(figsize=(5,4))
+sns.distplot(blast_covid_alignment[f'cov2-align-perc'], 
+             bins = np.arange(90,100.05,0.25),
+             kde=False, rug=False);
+plt.title(f'Percentage of alignment with {n_genomes} genomes for each oligo (n={blast_covid_alignment.shape[0]})')
+plt.tight_layout()
+file_save = path_results / 'cov2-alignment_hist.png'
+plt.savefig(file_save, dpi=300)
+
+# >> Cummulative histogram
+plt.figure(figsize=(5,4))
+kwargs = {'cumulative': True}
+sns.distplot(blast_covid_alignment[f'cov2-align-perc'], hist_kws=kwargs, kde_kws=kwargs)
+plt.title(f'Percentage of alignment with {n_genomes} genomes for each oligo (n={blast_covid_alignment.shape[0]})')
+file_save = path_results / 'cov2-alignment_cdf.png'
+plt.savefig(file_save, dpi=300)
 # %%

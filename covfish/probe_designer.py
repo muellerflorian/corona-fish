@@ -9,8 +9,64 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import json
 
+# Perform local blast
+def blast_probes(file_fasta, db, folder_sub, add_new_line=False, max_target_seqs=100, result_fields=None):
+    """[summary]
 
-# %% Read blasts
+    Parameters
+    ----------
+    file_fasta : [type]
+        [description]
+    db : [type]
+        [description]
+    folder_sub : [type]
+        [description]
+    min_identity : float, optional
+        [description], by default 0.7
+    add_new_line : bool, optional
+        [description], by default False
+    max_target_seqs : int, optional
+    result_fields : str with additional format specifiers
+        Additional format specifiers that should be added to hit list file.
+        http://www.metagenomics.wiki/tools/blast/blastn-output-format-6
+
+    Returns
+    -------
+    [type]
+        [description]
+    """
+    print(f'Performing local blast against: {db}')
+    
+    # Path to save results
+    path_save = file_fasta.parents[0] / 'blast' / folder_sub
+
+    if not path_save.is_dir():
+        path_save.mkdir()
+
+    # File to save results
+    db_name = db.stem    
+    file_save = path_save / f'{db_name}.txt'
+
+    # Output format
+    if result_fields:
+        outfmt = f'6 {result_fields}'
+    else:
+        outfmt = '6'
+
+    # Perform blast
+    blastn_cline = NcbiblastnCommandline(query=file_fasta,
+                                        db=db,
+                                        strand='both',
+                                        evalue=5,
+                                        outfmt=outfmt,
+                                        out=file_save,
+                                        task='blastn-short',
+                                        max_target_seqs=max_target_seqs,
+                                        max_hsps=1)
+    # Perform blast ans summarize XML file
+    stdout, stderr = blastn_cline()
+
+# Read blast results and summarize them
 def blast_summarize(path_blast, file_identifier, sep, ext, path_results, refseq_keep=None):
     """[summary]
 
@@ -37,7 +93,6 @@ def blast_summarize(path_blast, file_identifier, sep, ext, path_results, refseq_
 
     # Column names of blast hit file
     names_col = ['qseqid', 'sseqid', 'pident', 'length', 'mismatch', 'gapopen', 'qstart', 'qend', 'sstart', 'hsend', 'evalue', 'bitscore']
-
 
     # Check if folder exists
     if not path_blast.is_dir():
@@ -68,7 +123,7 @@ def blast_summarize(path_blast, file_identifier, sep, ext, path_results, refseq_
         if not (file_name in blast_name_identifier):
             ident = file_blast.stem
             print(f'No identifier for result file  {file_name} found. Will use file stem {ident} instead.')
-            
+
         else:
             ident = blast_name_identifier[file_name]
 
@@ -139,7 +194,7 @@ def summarize_XML(file_xml, flag_print=False):
                     print(hsp.query)
                     print(hsp.match)
                     print(hsp.sbjct)
-  
+
                 # Analyse alignment title
                 #    https://en.wikipedia.org/wiki/RefSeq
                 #    http://www.nslc.wustl.edu/elgin/genomics/bio4342/1archives/2006/AccReference.pdf
@@ -209,53 +264,20 @@ def write_summary_csv(file_name, blast_summary, min_identity = 0.7, add_new_line
                     writer.writerow('')
                 writer.writerow(b)
 
-
-# Blast list of probes against local db
-def blast_probes(file_fasta, db, min_identity=0.7, add_new_line=False):
-
-    path_save = file_fasta.parents[0] / 'blast' / 'local'
-    if not path_save.is_dir():
-        path_save.mkdir()
-
-    # Define function call
-    db_name = db.stem
-
-    # Tabular format
-    outfmt = 6
-    file_save = path_save / f'{db_name}.txt'
-
-    # Perform blast 
-    blastn_cline = NcbiblastnCommandline(query=file_fasta,
-                                        db=db,
-                                        strand='both',
-                                        evalue=5,
-                                        outfmt=outfmt,
-                                        out=file_save,
-                                        task='blastn-short',
-                                        max_target_seqs = 100,
-                                        max_hsps = 1)
-    # Perform blast ans summarize XML file
-    stdout, stderr = blastn_cline()
-
-    #file_csv = path_save / f'{db_name}.csv' 
-    #blast_summary = summarize_XML(file_xml=file_xml, flag_print=False)
-    #write_summary_csv(file_csv, blast_summary, min_identity=min_identity, add_new_line=add_new_line)
-    #return blast_summary
-
 def blast_results_combine(blast_summary):
-        '''
-        Summarize the different blast searches and order them by Query ID, and
-        then length of alignment
-        '''
-        blast_summary_all = []
+    '''
+    Summarize the different blast searches and order them by Query ID, and
+    then length of alignment
+    '''
+    blast_summary_all = []
 
-        for blast_res in blast_summary:
+    for blast_res in blast_summary:
 
-            # Fuse the two files and sort
-            blast_summary_all.extend(blast_res[0])
+        # Fuse the two files and sort
+        blast_summary_all.extend(blast_res[0])
 
-        # Sort files
-        blast_summary_all = sorted(blast_summary_all, key=itemgetter(3), reverse=True)
-        blast_summary_all = sorted(blast_summary_all, key=itemgetter(0))
+    # Sort files
+    blast_summary_all = sorted(blast_summary_all, key=itemgetter(3), reverse=True)
+    blast_summary_all = sorted(blast_summary_all, key=itemgetter(0))
 
-        return blast_summary_all
+    return blast_summary_all

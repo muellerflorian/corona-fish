@@ -12,7 +12,8 @@ setuptools.setup(
                       'pandas',
                       'seaborn',
                       'numpy',
-                      'matplotlib'],
+                      'matplotlib',
+                      'statsmodels'],
     include_package_data=True,
     classifiers=(
         "Programming Language :: Python :: 3",
