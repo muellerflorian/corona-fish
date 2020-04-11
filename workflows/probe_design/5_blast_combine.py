@@ -82,7 +82,7 @@ for blast_add in blast_all:
 
 # >>> Save file to csv
 file_save = path_probes / 'Probes__cov-2_ALL__with_blast_FLAPY.csv'
-probes_summary_joined.to_csv(file_save, sep=',')   
+probes_summary_joined.to_csv(file_save, sep=',', index=False)   
 print(f'\n\nSUMMARY saved as {file_save}')
 
 # %% Plot results of alignment against cov-2

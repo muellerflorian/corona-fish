@@ -25,7 +25,7 @@ n_probes = probes_summary_load.query(query_both).shape[0]
 print(f'Query [{query_both}] yields {n_probes} probes')
 
 # %%  Get all alignment length in file
-blast_align_max = 20
+blast_align_max = 22
 
 col_names = list(probes_summary_load.columns.values)
 cols_length = [col_name for col_name in col_names if ('_length' in col_name) and (not 'cov-2' in col_name)  ]
@@ -49,6 +49,7 @@ print(f'Query [ALL restrictions] yields {n_probes} probes')
 
 # %% Plot probe positions
 probes_query = probes_summary_load.query(query_all)
+
 path_save = path_probes / 'query' / f'blast_align_max_{blast_align_max}'
 if not path_save.is_dir():
     path_save.mkdir(parents=True)
@@ -60,7 +61,7 @@ with open(file_save, "w") as text_file:
 
 # Plot queried probe list
 file_save = path_save / 'cov2_probes_query.csv'
-probes_query.to_csv(file_save, sep=',') 
+probes_query.to_csv(file_save, sep=',', index=False) 
 
 # Save plot with probe positions
 plt.figure(figsize=(10,1))
