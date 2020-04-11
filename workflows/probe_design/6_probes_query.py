@@ -37,7 +37,7 @@ query_align_length = query_align_length[:-2]  #
 n_probes = probes_summary_load.query(query_align_length).shape[0]
 print(f'Query [COMBINED alignment length] yields {n_probes} probes')
 
-query_all = query_align_length + '&' + query_probes + '&' +  query_cov_align
+query_all = query_align_length + '&' + query_probes + '&' + query_cov_align
 n_probes = probes_summary_load.query(query_all).shape[0]
 print(f'Query [ALL restrictions] yields {n_probes} probes')
 
