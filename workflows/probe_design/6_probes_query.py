@@ -10,35 +10,58 @@ import matplotlib.pyplot as plt
 path_probes = Path(Path.cwd() / '..' / '..' / 'data' / 'fasta' / 'Probes__cov-2').resolve()
 file_results = path_probes / 'Probes__cov-2_ALL__with_blast.csv'
 probes_summary_load = pd.read_csv(file_results)
+probes_summary_load = probes_summary_load.fillna(0)
 
-# Replace NaN by zeros for easier analysis
-probes_summary_load[probes_summary_load == 'NAN'] = 0.0
-probes_summary_load.cf_length[probes_summary_load. =cf_length == 'NAN'] = 0.0
+# %% GC and PNAS filters
+query_probes = 'GCFilter==1 & NbOfPNAS>2'
+n_probes = probes_summary_load.query(query_probes).shape[0]
+print(f'Query [{query_probes}] yields {n_probes} probes')
 
-probes_summary_load = probes_summary_load.astype({'cf_length': 'float64'})
-probes_summary_load = probes_summary_load.astype({'h_length': 'float64'})
+query_cov_align = 'cov2_align_perc > 98'
+n_probes = probes_summary_load.query(query_cov_align).shape[0]
+print(f'Query [{query_cov_align}] yields {n_probes} probes')
 
-print(probes_summary_load.query('h_length<20').shape[0])
-print(probes_summary_load.query('GCFilter==1 & NbOfPNAS>2').shape[0])
-
-# %% Query for alignment length
-
-# >> Get all alignment length in file
+# %%  Get all alignment length in file
 col_names = list(probes_summary_load.columns.values)
-col_length =  [col_name for col_name in col_names if ('_length' in col_name) and (not 'cov-2' in col_name)  ]
+cols_length = [col_name for col_name in col_names if ('_length' in col_name) and (not 'cov-2' in col_name)  ]
 
-query_align_length = ''.join(map(lambda x: str(x) + '<20 & ', col_length)) 
-query_align_length = query_align_length[:-2]  # Delete last charachter
-print(probes_summary_load.query('beta-corona_length<20').shape[0])
+for col_length in cols_length:
+    col_mismatch = col_length.replace('length','mismatch')
+    query = f'{col_length}-{col_mismatch}<=20'
+    n_probes = probes_summary_load.query(query).shape[0]
+    print(f'Query [{query}] yields {n_probes} probes')
+
+# %% Query all
+query_align_length = ''.join(map(lambda x: x + '-' + x.replace('length','mismatch') + '<=20 & ', cols_length)) 
+query_align_length = query_align_length[:-2]  #
+n_probes = probes_summary_load.query(query_align_length).shape[0]
+print(f'Query [COMBINED alignment length] yields {n_probes} probes')
+
+query_all = query_align_length + '&' + query_probes + '&' +  query_cov_align
+n_probes = probes_summary_load.query(query_all).shape[0]
+print(f'Query [ALL restrictions] yields {n_probes} probes')
 
 
 # %% Plot probe positions
-df_query = probes_summary_load.query('GCFilter==1 & NbOfPNAS>2 & h_length<20 & cf_length<20')
-file_save = path_probes / 'probe_positions.png'
+probes_query = probes_summary_load.query(query_all)
+path_save = path_probes / 'query'
+if not path_save.is_dir():
+    path_save.mkdir()
 
+# Save query
+file_save = path_save / 'query_string.txt'
+with open(file_save, "w") as text_file:
+    print(f"{query_all}", file=text_file)
+
+# Plot queried probe list
+file_save = path_save / 'cov2_probes_query.csv'
+probes_query.to_csv(file_save, sep=',') 
+
+# Save plot with probe positions
 plt.figure(figsize=(10,1))
-plt.plot(df_query['theStartPos'].values, np.ones((df_query.shape[0],1)), '|', color='black')
+plt.plot(probes_query['theStartPos'].values, np.ones((df_query.shape[0],1)), '|', color='black')
 plt.tight_layout()
+file_save = path_save / 'probe_positions.png'
 plt.savefig(file_save, dpi=300)
 
 # %%

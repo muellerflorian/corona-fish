@@ -62,8 +62,8 @@ blast_results.sort_values('align_diff', ascending=False).drop_duplicates(['qseqi
 # Keep only blast hits with 0 or 1 mismatch over the entire probe sequence
 blast_covid_alignment = blast_results.query('align_diff <=1').groupby('qseqid').count()
 blast_covid_alignment['align_diff'] = blast_covid_alignment['align_diff'] * 100.0 / n_genomes
-blast_covid_alignment.rename(columns={'sseqid': f'cov2-align-N-{n_genomes}',
-                                      'align_diff': f'cov2-align-perc'}
+blast_covid_alignment.rename(columns={'sseqid': f'cov2_align_N',
+                                      'align_diff': f'cov2_align_perc'}
                              ,inplace=True)
 
 # >>>>  Read probe summary and add other blast results
@@ -81,7 +81,6 @@ for blast_add in blast_all:
 
 # >>> Save file to csv
 file_save = path_probes / 'Probes__cov-2_ALL__with_blast.csv'
-probes_summary_joined.fillna('NAN').to_csv(file_save, sep=',')   
 probes_summary_joined.to_csv(file_save, sep=',')   
 
 
