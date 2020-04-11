@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import json
 
 # Perform local blast
-def blast_probes(file_fasta, db, folder_sub, add_new_line=False, max_target_seqs=100, result_fields=None):
+def blast_probes(file_fasta, db, path_save, add_new_line=False, max_target_seqs=100, result_fields=None):
     """[summary]
 
     Parameters
@@ -36,12 +36,10 @@ def blast_probes(file_fasta, db, folder_sub, add_new_line=False, max_target_seqs
         [description]
     """
     print(f'Performing local blast against: {db}')
-    
-    # Path to save results
-    path_save = file_fasta.parents[0] / 'blast' / folder_sub
 
+    # Path to save results
     if not path_save.is_dir():
-        path_save.mkdir()
+        path_save.mkdir(parents=True)
 
     # File to save results
     db_name = db.stem    

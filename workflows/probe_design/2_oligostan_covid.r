@@ -5,7 +5,7 @@ FileNameFasta <- 'cov-2.fasta'
 
 #FASTA Sequences: path   [no '/' at the end of the path name]
 #WINDOWS IMPORTANT: Replace the separators in the path name \ by /
-PathNameFasta <- 'D:/Work/GitHub/projects/corona-fish/data/fasta'
+PathNameFasta <- 'D:/Work/GitHub/projects/corona-fish/data/probes'
 #Output directory and file names: generated automatically
 name_base <-strsplit(FileNameFasta, "[.]")[[1]][1]
 FileNameOutput <- paste('Probes__',name_base,sep="")
@@ -72,6 +72,7 @@ paste(FileNameOutput,"_ALL_summary",".txt",collapse="",sep="")  -> RawProbesFile
 
 paste(FileNameOutput,"_FILT",".fasta",collapse="",sep="") -> ResultFastaSummaryFileName
 paste(FileNameOutput,"_ALL",".fasta",collapse="",sep="")  -> RawProbesFastaSummaryFileName
+paste(FileNameOutput,"_ALL_FLAPY",".fasta",collapse="",sep="")  -> RawProbesFlapYFastaSummaryFileName
 
 
 getGandTInfosFromFastaReads <- function(FastaFile){
@@ -492,6 +493,14 @@ startDum <- as.list(as.character(dataResultProbesWithSEQSTot$theStartPos))
 endDum   <- as.list(as.character(dataResultProbesWithSEQSTot$theEndPos))
 namesDum <- as.list(as.character(dataResultProbesWithSEQSTot$ProbesNames))
 write.fasta(as.list(as.character(dataResultProbesWithSEQSTot$Seq)), paste(namesDum,startDum,endDum,sep="--"), nbchar = 60, RawProbesFastaSummaryFileName, open = "w")
+
+# Write as FASTA with FLAP-Y - for nblast
+startDum <- as.list(as.character(dataResultProbesWithSEQSTot$theStartPos))
+endDum   <- as.list(as.character(dataResultProbesWithSEQSTot$theEndPos))
+namesDum <- as.list(as.character(dataResultProbesWithSEQSTot$ProbesNames))
+write.fasta(as.list(as.character(dataResultProbesWithSEQSTot$HybFlpY)), paste(namesDum,startDum,endDum,sep="--"), nbchar = 60, RawProbesFlapYFastaSummaryFileName, open = "w")
+
+
 
 ##### FILTER PROBES
 TheFilteredProbes <- NULL

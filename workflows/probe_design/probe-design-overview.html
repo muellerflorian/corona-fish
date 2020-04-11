@@ -2,7 +2,13 @@
 <ul>
 <li><a href="#probe-design-for-cov-2">Probe-design for COV-2</a>
 <ul>
-<li><a href="#overview">Overview</a></li>
+<li><a href="#overview">Overview</a>
+<ul>
+<li><a href="#target-sars-cov-2-nc0455122">Target <strong>SARS-CoV-2</strong> (NC_045512.2)</a></li>
+<li><a href="#specific-over-other-coronaviruses">Specific over other Coronaviruses</a></li>
+<li><a href="#specific-over-other-virusespathogens">Specific over other viruses/pathogens</a></li>
+<li><a href="#probes-are-web-blasted-against-possible-host-genomes">Probes are (web) blasted against possible host genomes</a></li>
+</ul></li>
 <li><a href="#probe-design-workflow">Probe-design workflow</a>
 <ul>
 <li><a href="#1-create-fasta-file-python">1. Create fasta file [Python]</a>
@@ -42,26 +48,190 @@
 </ul></li>
 </ul>
 <h2 id="overview">Overview</h2>
-<p><strong>Target</strong>: <strong>SARS-CoV-2</strong> (NC_045512.2) Sequence of viruse stored in <code>data\Wuhan-Hu-1_2019.gb</code></p>
-<p>Target regions are define in the file <code>data\Wuhan-Hu-1_2019__target_regions.tsv</code>. This can be the entire genome, or sub-regions.</p>
-<p><strong>Probe should be specific over Beta-Coronaviruses (SARS, MERS, HKU1, OC43, NL63, and 229E):</strong></p>
+<h3 id="target-sars-cov-2-nc_045512.2">Target <strong>SARS-CoV-2</strong> (NC_045512.2)</h3>
 <ul>
-<li>SARS (NC_004718.3): https://www.ncbi.nlm.nih.gov/nuccore/NC_004718.3?report=fasta</li>
-<li>MERS (NC_019843.3): https://www.ncbi.nlm.nih.gov/nuccore/NC_019843.3?report=fasta</li>
-<li>HKU1 (NC_006577.2): https://www.ncbi.nlm.nih.gov/nuccore/NC_006577.2?report=fasta<br />
+<li><strong>Genome</strong> is stored here: <code>data\Wuhan-Hu-1_2019.gb</code></li>
+<li>For a <strong>blast</strong> search against this genome, we use: <code>data\genomes\cov2\cov2.fasta</code></li>
+<li>For a <strong>blas</strong>t against &gt;2500 <strong>aligned cov-2 genomes</strong>, we use: <code>data\genomes\cov2\cov2_aligned.fasta</code></li>
+<li><strong>Target regions</strong> are define in the file <code>data\Wuhan-Hu-1_2019__target_regions.tsv</code>. This can be the entire genome, or sub-regions.</li>
+</ul>
+<h3 id="specific-over-other-coronaviruses">Specific over other Coronaviruses</h3>
+<p><code>data\genomes\beta-corona</code>: genomes are stored in multi-fasta file.</p>
+<table>
+<thead>
+<tr class="header">
+<th>beta-coronavirus</th>
+<th>ID</th>
+<th>Included</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SARS</td>
+<td>NC_004718.3</td>
+<td>[x]</td>
+</tr>
+<tr class="even">
+<td>MERS</td>
+<td>NC_019843.3</td>
+<td>[x]</td>
+</tr>
+<tr class="odd">
+<td>HKU1</td>
+<td>NC_006577.2</td>
+<td>[x]</td>
+</tr>
+<tr class="even">
+<td>OC43</td>
+<td>NC_006213.1</td>
+<td>[x]</td>
+</tr>
+<tr class="odd">
+<td>NL63</td>
+<td>JX504050.1</td>
+<td>[x]</td>
+</tr>
+<tr class="even">
+<td>229E</td>
+<td>NC_002645.1</td>
+<td>[x]</td>
+</tr>
+</tbody>
+</table>
+<h3 id="specific-over-other-virusespathogens">Specific over other viruses/pathogens</h3>
+<p><code>data\genomes\viruses</code>: genomes are stored in separate fasta file.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Virus/pathogen</th>
+<th>ID</th>
+<th>Included</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Mycobacterium tuberculosis</td>
+<td>NC_000962.3</td>
+<td>[x]</td>
+</tr>
+<tr class="even">
+<td>Human parainfluenza virus type 1</td>
+<td>NC_003461</td>
+<td>[x]</td>
+</tr>
+<tr class="odd">
+<td>Human parainfluenza virus type 2</td>
+<td>NC_003443.1</td>
+<td>[x]</td>
+</tr>
+<tr class="even">
+<td>Human parainfluenza virus type 3</td>
+<td>NC_001796</td>
+<td>[x]</td>
+</tr>
+<tr class="odd">
+<td>Human parainfluenza virus type 4</td>
+<td>NC_021928.1</td>
+<td>[x]</td>
+</tr>
+<tr class="even">
+<td>Respiratory syncytial virus</td>
+<td>NC_001803</td>
+<td>[x]</td>
+</tr>
+<tr class="odd">
+<td>Human metapneumovirus</td>
+<td>NC_039199</td>
+<td>[x]</td>
+</tr>
+<tr class="even">
+<td>Mycoplasma pneumoniae</td>
+<td>NZ_CP010546</td>
+<td>[x]</td>
+</tr>
+<tr class="odd">
+<td>Chlamydophila pneumoniae</td>
+<td>NC_005043.1</td>
+<td>[x]</td>
+</tr>
+<tr class="even">
+<td>Influenza A H3N2</td>
+<td></td>
+<td>[x]</td>
+</tr>
+<tr class="odd">
+<td>Influenza A H1N1 (such as A/Alaska/58/2017(H1N1))</td>
+<td>txid2043069</td>
+<td>[x]</td>
+</tr>
+<tr class="even">
+<td>Influenza B (such as B/Yamagata/16/88 and B/Victoria/2/87)</td>
+<td>txid416674</td>
+<td>[x]</td>
+</tr>
+<tr class="odd">
+<td>Influenza C</td>
+<td>GCF_000856665.10</td>
+<td>[x]</td>
+</tr>
+<tr class="even">
+<td>Influenza D</td>
+<td>GCF_002867775.1</td>
+<td>[x]</td>
+</tr>
+<tr class="odd">
+<td>Rhinovirus/enterovirus</td>
+<td>NC_038312.1</td>
+<td>[x]</td>
+</tr>
+</tbody>
+</table>
+<p><strong>some urls</strong> for the segmented viruses, I checked for the Taxonomy entries and then downloaded the coding squences.</p>
+<ul>
+<li>H1N1: https://www.ncbi.nlm.nih.gov/nuccore/?term=txid2043069[Organism:noexp]</li>
+<li>Influenza B: https://www.ncbi.nlm.nih.gov/nuccore/?term=txid416674[Organism:noexp]</li>
+<li>Influenza C: reference genome: https://www.ncbi.nlm.nih.gov/nuccore/1250175392,1250175391,1250175390,1250175389,1250175388,211910015,52630357<br />
 </li>
-<li>OC43 (NC_006213.1): https://www.ncbi.nlm.nih.gov/nuccore/NC_006213.1</li>
-<li>NL63 (JX504050.1): https://www.ncbi.nlm.nih.gov/nuccore/JX504050.1?report=fasta</li>
-<li>229E (NC_002645.1): https://www.ncbi.nlm.nih.gov/nuccore/NC_002645.1?report=fasta</li>
+<li>Influenza D: https://www.ncbi.nlm.nih.gov/nuccore/1328406502,1328406500,1328406498,1328406496,1328406494,1328406492,1328406490</li>
 </ul>
-<p><strong>Additional specifity requirements:</strong></p>
-<ul>
-<li>Mycobacterium tuberculosis (NC_000962): https://www.ncbi.nlm.nih.gov/nuccore/NC_000962.3 TODO: Influenza A:</li>
-</ul>
-<p><strong>Probes are aligned against different organisms</strong>:</p>
-<ul>
-<li>human TODO: mouse, hamster, monkey, …</li>
-</ul>
+<h3 id="probes-are-web-blasted-against-possible-host-genomes">Probes are (web) blasted against possible host genomes</h3>
+<p>Only tanscripts are kept from blast hits, Refseq annotations starting with : ‘NM_’, ‘XM_’, ‘NR’, ‘XR_’</p>
+<table>
+<thead>
+<tr class="header">
+<th>Host</th>
+<th>Identifier</th>
+<th>Tested</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Home sapiens</td>
+<td>Human G+T</td>
+<td>[x]</td>
+</tr>
+<tr class="even">
+<td>Mus musculus</td>
+<td>Mouse G+T</td>
+<td>[x]</td>
+</tr>
+<tr class="odd">
+<td>African Green monkey</td>
+<td>60711</td>
+<td>[x]</td>
+</tr>
+<tr class="even">
+<td>Hamsters</td>
+<td>10026</td>
+<td>[x]</td>
+</tr>
+<tr class="odd">
+<td>Ferret</td>
+<td>9669</td>
+<td>[x]</td>
+</tr>
+</tbody>
+</table>
 <h2 id="probe-design-workflow">Probe-design workflow</h2>
 <h3 id="create-fasta-file-python">1. Create fasta file [Python]</h3>
 <p>Takes the file with the target regions, extracts their sequences, and creates a separate fasta file for each target region type. If several sequences are defined for a target regions type, the script will create a multi-fasta file, e.g.  multiple fasta entries in one file,</p>
@@ -110,8 +280,16 @@
 <p><strong>Output</strong>: Will create a folder <code>data\fasta\Probes__annotation-name</code>, where <code>region-name</code> is the name of the regions given in step 1, e.g. <code>cov-2</code> when the annotated region was the default region covering the entire genome.</p>
 <p>Contains a fasta file and a summary text file for all probes identified (<code>ALL</code>), and the probes passing the specified filters (<code>FILT</code>).</p>
 <h3 id="blast-sequences-local-databases">3. Blast sequences: LOCAL databases</h3>
-<p>Perform local blast against several reference genomes.</p>
-<p><strong>IMPORTANT:</strong> if you add a new target region type, you have to update the path pointing to the create probe regions in step 2.</p>
+<p>Perform local blast against several reference genomes. Results are stored as blast hit files with output format 6 (http://www.metagenomics.wiki/tools/blast/blastn-output-format-6).</p>
+<p>Blast is performed with the option <code>blastn-short</code>, which is specifically optimized for shorter sequences (&lt;50 bases). This changes the following parameters</p>
+<ul>
+<li><code>word-size</code>: 2</li>
+<li><code>gapopen</code>: 5</li>
+<li><code>gapextend</code>: 2</li>
+<li><code>reward</code>: 1</li>
+<li><code>penalty</code>: -3</li>
+</ul>
+<p><strong>IMPORTANT</strong>: you have to build the databases on your local installation (see below).</p>
 <ul>
 <li>Local version of blast + databases being installed.</li>
 <li>Some more information
@@ -129,40 +307,42 @@
 <li>Local databases can be build for alignment against any fasta sequence.</li>
 </ul>
 <h4 id="build-local-database-from-downloaded-fasta-sequences">Build local database from downloaded fasta sequences</h4>
-<p>Databases for several genomes are provided. Databases were built with</p>
-<ol type="1">
-<li>Build database from fasta for all corona-viruses (multi-fasta file): <code>makeblastdb -in corona_family.fasta -dbtype nucl -title corona-family</code></li>
-<li>Build database from fasta for tuberculosis: <code>makeblastdb -in tuberculosis.fasta -dbtype nucl -title tuberculosis -max_file_sz 500000 -parse_seqids</code></li>
-<li>Build database from fasta for cov-2: <code>makeblastdb -in cov-2.fasta -dbtype nucl -title cov-2 -max_file_sz 500000 -parse_seqids</code></li>
-</ol>
+<p>FASTA files for different viruses/pathogens/beta-coronaviruses are provided. blast data-base has to be build for each new local installation.</p>
+<p>Build commands are listed in <code>data\genomes\info.md</code></p>
+<p>The <strong>general command</strong> is <code>makeblastdb -in beta-corona.fasta -dbtype nucl -title beta-corona -max_file_sz 500000 -parse_seqids</code></p>
 <ul>
 <li>The <code>-parse_seqids</code> option is required to keep the original sequence identifiers.</li>
 <li>The <code>-max_file_sz</code> option helps to avoid an error under windows?</li>
 </ul>
+<p>Has to be performed for each of the genomes were a blast is desired.</p>
 <p>Build can provoke error messages under Windows. See misc below.</p>
 <h4 id="workflow-2">Workflow</h4>
 <p><strong>Function</strong>: <code>probe_design\3_blast_local.py</code></p>
 <p><strong>Input</strong>:</p>
 <ol type="1">
-<li>Fasta files with probe sequences</li>
-<li>Local blastn databases</li>
+<li>Fasta files with probe sequences: <code>data\fasta\Probes__cov-2\Probes__cov-2_ALL.fasta</code></li>
+<li>Local blastn databases: <code>data\genomes\</code></li>
 </ol>
 <p><strong>Output</strong>:</p>
 <ol type="1">
-<li>Blast hit files. http://www.metagenomics.wiki/tools/blast/blastn-output-format-6</li>
+<li>Blast hit files for each data-basesstored in <code>\data\fasta\Probes__cov-2\blast\local</code></li>
 </ol>
 <h3 id="blast-sequence-against-human-transcriptome">4.Blast sequence against human transcriptome</h3>
 <ol type="1">
-<li>Blast website: https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch</li>
-<li>Drag multi-fasta file with all sequences</li>
-<li>Define blast search of interest</li>
-<li>Download results as hit file (csv). We performed blast against
+<li><a href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch">Blast website</a></li>
+<li><strong>Enter query sequence</strong>: Upload file with probe sequences**: <code>data\fasta\Probes__cov-2\Probes__cov-2_ALL.fasta</code></li>
+<li><strong>Choose Search Set</strong>:
 <ol type="1">
-<li>Human: <code>blastn_human_transcriptome.csv</code></li>
+<li><code>Database</code>: <code>Standard databases (nr etc.)</code></li>
+<li><code>Organism</code>: add taxid of host organism</li>
 </ol></li>
+<li><strong>Program Selection</strong>: <code>Somewhat similar sequences</code></li>
+<li>Perform Blast.</li>
+<li><strong>Download results</strong> as hit file (csv). We performed blast against</li>
 </ol>
 <h3 id="combine-blast-results">5. Combine blast results</h3>
 <p>Results of all blast searches are combined, and a summary files with details of probe design and the blast results created.</p>
+<p>The file <code>data\blast_identifiers.json</code> permits to specify an identifier for a blast search. If absent, the file-name will be used.</p>
 <h4 id="workflow-3">Workflow</h4>
 <p><strong>Function</strong>: <code>probe_design\5_blast_combine.py</code></p>
 <p><strong>Input</strong>:</p>
@@ -228,5 +408,9 @@
 <p>For example with tabular output file blast-out.b6:</p>
 <h4 id="make-blast-over-the-internet-no-local-installation-required">Make blast over the internet (no local installation required)</h4>
 <p>Starting point: https://www.biostars.org/p/129932/</p>
+<p>qblast will accept fasta or a single sequence.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="im">from</span> Bio.Blast <span class="im">import</span> NCBIWWW</span>
 <span id="cb1-2"><a href="#cb1-2"></a>result_handle <span class="op">=</span> NCBIWWW.qblast(<span class="st">&quot;blastn&quot;</span>, <span class="st">&quot;nt&quot;</span>, some_sequence)</span></code></pre></div>
+<p>refseq_rna as a database …</p>
+<p>https://www.biostars.org/p/58457/</p>
+<p>NCBIWWW.qblast(program=“blastn”, database=“refseq_genomic”, sequence=input_sequence, entrez_query=“txid7227[ORGN]”)</p>

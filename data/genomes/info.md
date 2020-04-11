@@ -9,13 +9,10 @@ makeblastdb -in beta_corona.fasta -dbtype nucl -title beta_corona -max_file_sz 5
 ```
 
 ## Cov-2
+__Note__: aligned cov-2 contains 2531 cov-2 sequences.
+
 ```
 makeblastdb -in cov2.fasta -dbtype nucl -title cov2 -max_file_sz 500000 -parse_seqids
-```
-
-## cov2-aligned
-Contains 2531 cov-2 sequences
-```
 makeblastdb -in cov2_aligned.fasta -dbtype nucl -title cov2_aligned -max_file_sz 500000 -parse_seqids
 ```
 
@@ -37,5 +34,3 @@ makeblastdb -in influenza_C.fasta -dbtype nucl -title influenza_C -max_file_sz 5
 makeblastdb -in influenza_D.fasta -dbtype nucl -title influenza_D -max_file_sz 500000 -parse_seqids
 makeblastdb -in rhenovirus_B.fasta -dbtype nucl -title rhenovirus_B -max_file_sz 500000 -parse_seqids
 ```
-
-

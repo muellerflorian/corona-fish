@@ -14,9 +14,11 @@ import importlib
 
 # %% Folders for data and results
 path_data = Path(Path.cwd() / '..' / '..' / 'data').resolve()
-path_blast = path_data / 'fasta' / 'Probes__cov-2' / 'blast'
-path_probes = path_data / 'fasta' / 'Probes__cov-2'
+path_blast = path_data / 'probes' / 'Probes__cov-2' / 'blast'
+path_probes = path_data / 'probes' / 'Probes__cov-2'
 path_results = path_blast / 'results_details'
+
+file_summary = path_probes / 'Probes__cov-2_ALL_summary.txt' 
 
 if not path_results.is_dir():
     path_results.mkdir()
@@ -45,7 +47,7 @@ blast_local_all = probe_designer.blast_summarize(path_blast=path_blast / 'local'
 #  >>> import blast against cov-2 alignment
 
 # Count how many genoems (identified by >)
-file_cov = path_data / 'genomes' / 'cov2_aligned' / 'cov2_aligned.fasta'
+file_cov = path_data / 'genomes' / 'cov2' / 'cov2_aligned.fasta'
 genomes_cov2 = file_cov.read_text()
 n_genomes = genomes_cov2.count('>')
 
@@ -69,7 +71,6 @@ blast_covid_alignment.rename(columns={'sseqid': f'cov2_align_N',
 # >>>>  Read probe summary and add other blast results
 
 # >>>  DF with probe list
-file_summary = path_probes / 'Probes__cov-2_ALL_summary.txt'
 probes_summary = pd.read_csv(file_summary, sep='\t')
 probes_summary['qseqid'] = probes_summary['ProbesNames'] + '--' + probes_summary['theStartPos'].astype('str') + '--' + probes_summary['theEndPos'].astype('str')
 
@@ -80,18 +81,18 @@ for blast_add in blast_all:
     probes_summary_joined = pd.merge(left=probes_summary_joined, right=blast_add, how='left', left_on='qseqid', right_on='qseqid')
 
 # >>> Save file to csv
-file_save = path_probes / 'Probes__cov-2_ALL__with_blast.csv'
+file_save = path_probes / 'Probes__cov-2_ALL__with_blast_FLAPY.csv'
 probes_summary_joined.to_csv(file_save, sep=',')   
-
+print(f'\n\nSUMMARY saved as {file_save}')
 
 # %% Plot results of alignment against cov-2
 
 # >>> Number of probe squences that match well all consensus sequences
 plt.figure(figsize=(5,4))
-sns.distplot(blast_covid_alignment[f'cov2-align-perc'], 
+sns.distplot(blast_covid_alignment[f'cov2_align_perc'], 
              bins = np.arange(90,100.05,0.25),
              kde=False, rug=False);
-plt.title(f'Percentage of alignment with {n_genomes} genomes for each oligo (n={blast_covid_alignment.shape[0]})')
+plt.title(f'Percentage of alignment\nwith {n_genomes} genomes for each oligo (n={blast_covid_alignment.shape[0]})')
 plt.tight_layout()
 file_save = path_results / 'cov2-alignment_hist.png'
 plt.savefig(file_save, dpi=300)
@@ -99,8 +100,8 @@ plt.savefig(file_save, dpi=300)
 # >> Cummulative histogram
 plt.figure(figsize=(5,4))
 kwargs = {'cumulative': True}
-sns.distplot(blast_covid_alignment[f'cov2-align-perc'], hist_kws=kwargs, kde_kws=kwargs)
-plt.title(f'Percentage of alignment with {n_genomes} genomes for each oligo (n={blast_covid_alignment.shape[0]})')
+sns.distplot(blast_covid_alignment[f'cov2_align_perc'], hist_kws=kwargs, kde_kws=kwargs)
+plt.title(f'Percentage of alignment\nwith {n_genomes} genomes for each oligo (n={blast_covid_alignment.shape[0]})')
 file_save = path_results / 'cov2-alignment_cdf.png'
 plt.savefig(file_save, dpi=300)
 # %%

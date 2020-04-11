@@ -2,6 +2,10 @@
 
 - [Probe-design for COV-2](#probe-design-for-cov-2)
   - [Overview](#overview)
+    - [Target **SARS-CoV-2** (NC_045512.2)](#target-sars-cov-2-nc0455122)
+    - [Specific over other Coronaviruses](#specific-over-other-coronaviruses)
+    - [Specific over other viruses/pathogens](#specific-over-other-virusespathogens)
+    - [Probes are (web) blasted against possible host genomes](#probes-are-web-blasted-against-possible-host-genomes)
   - [Probe-design workflow](#probe-design-workflow)
     - [1. Create fasta file [Python]](#1-create-fasta-file-python)
       - [Workflow](#workflow)
@@ -25,15 +29,16 @@
 
 ## Overview
 
-__Target__: **SARS-CoV-2** (NC_045512.2)
-    Sequence of viruse stored in `data\Wuhan-Hu-1_2019.gb`
+### Target **SARS-CoV-2** (NC_045512.2)
 
-Target regions are define in the file `data\Wuhan-Hu-1_2019__target_regions.tsv`. This can be the entire genome, or sub-regions.
+- **Genome** is stored here: `data\Wuhan-Hu-1_2019.gb`
+- For a **blast** search against this genome, we use: `data\genomes\cov2\cov2.fasta`
+- For a **blas**t against >2500 **aligned cov-2 genomes**, we use: `data\genomes\cov2\cov2_aligned.fasta`
+- **Target regions** are define in the file `data\Wuhan-Hu-1_2019__target_regions.tsv`. This can be the entire genome, or sub-regions.
 
-Identified probes are also blasted against >2000 aligned COV-2 genomes, and only probes
-with 0 or 1 mismatches for >98% of those genomes are used.
+### Specific over other Coronaviruses
 
-__Probe should be specific over other Coronaviruses:__
+`data\genomes\beta-corona`: genomes are stored in multi-fasta file. 
 
 | beta-coronavirus | ID          | Included |
 |------------------|-------------|----------|
@@ -44,9 +49,9 @@ __Probe should be specific over other Coronaviruses:__
 | NL63             | JX504050.1  | [x]      |
 | 229E             | NC_002645.1 | [x]      |
 
-`data\genomes\beta-corona`: genomes are stored in multi-fasta file, and blast databse build for it.
+### Specific over other viruses/pathogens
 
-__Additional specifity requirements:__
+`data\genomes\viruses`: genomes are stored in separate fasta file. 
 
 | Virus/pathogen                                             | ID               | Included |
 |------------------------------------------------------------|------------------|----------|
@@ -66,8 +71,6 @@ __Additional specifity requirements:__
 | Influenza D                                                | GCF_002867775.1  | [x]      |
 | Rhinovirus/enterovirus                                     | NC_038312.1      | [x]      |
 
-`data\genomes\viruses`: each genomes is stored separately.
-
 __some urls__ for the segmented viruses, I checked for the Taxonomy entries and then downloaded
 the coding squences.
 
@@ -76,15 +79,17 @@ the coding squences.
 - Influenza C: reference genome: https://www.ncbi.nlm.nih.gov/nuccore/1250175392,1250175391,1250175390,1250175389,1250175388,211910015,52630357  
 - Influenza D: https://www.ncbi.nlm.nih.gov/nuccore/1328406502,1328406500,1328406498,1328406496,1328406494,1328406492,1328406490
   
-__Probes are aligned against different host organisms__:
+### Probes are (web) blasted against possible host genomes
 
-| host                 | taxid | tested |
-|----------------------|-------|--------|
-| Home sapiens         | 9606  | [x]    |
-| Mus musculus         | 10090 | [x]    |
-| African Green monkey | 60711 | [x]    |
-| Hamsters             | 10026 | [x]    |
-| Ferret               | 9669  | [x]    |
+Only tanscripts are kept from blast hits, Refseq annotations starting with : 'NM_', 'XM_', 'NR', 'XR_'
+
+| Host                 | Identifier | Tested |
+|----------------------|------------|--------|
+| Home sapiens         | Human G+T  | [x]    |
+| Mus musculus         | Mouse G+T  | [x]    |
+| African Green monkey | 60711      | [x]    |
+| Hamsters             | 10026      | [x]    |
+| Ferret               | 9669       | [x]    |
 
 ## Probe-design workflow
 
@@ -155,6 +160,15 @@ Contains a fasta file and a summary text file for all probes identified (`ALL`),
 Perform local blast against several reference genomes. Results are stored as blast hit files with output format 6
 (http://www.metagenomics.wiki/tools/blast/blastn-output-format-6).
 
+Blast is performed with the option `blastn-short`, which is specifically optimized for shorter sequences (<50 bases). This changes the following
+parameters
+
+- `word-size`: 2
+- `gapopen`: 5
+- `gapextend`: 2
+- `reward`: 1
+- `penalty`: -3
+  
 __IMPORTANT__: you have to build the databases on your local installation (see below).
 
 - Local version of blast + databases being installed.
@@ -173,9 +187,12 @@ __IMPORTANT__: you have to build the databases on your local installation (see b
 
 #### Build local database from downloaded fasta sequences
 
-FASTA files for different viruses/pathogens/beta-coronaviruses are provided.
+FASTA files for different viruses/pathogens/beta-coronaviruses are provided. blast data-base has to be build
+for each new local installation.
 
-The general command is `makeblastdb -in beta-corona.fasta -dbtype nucl -title beta-corona -max_file_sz 500000 -parse_seqids`
+Build commands are listed in `data\genomes\info.md`
+
+The **general command** is `makeblastdb -in beta-corona.fasta -dbtype nucl -title beta-corona -max_file_sz 500000 -parse_seqids`
 
 - The `-parse_seqids` option is required to keep the original sequence identifiers.
 - The `-max_file_sz` option helps to avoid an error under windows?
@@ -199,7 +216,7 @@ __Output__:
 
 ### 4.Blast sequence against human transcriptome
 
-1. [Blast website](htps://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch)
+1. [Blast website](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch)
 2. **Enter query sequence**: Upload file with probe sequences**: `data\fasta\Probes__cov-2\Probes__cov-2_ALL.fasta`
 3. **Choose Search Set**:
    1. `Database`: `Standard databases (nr etc.)`

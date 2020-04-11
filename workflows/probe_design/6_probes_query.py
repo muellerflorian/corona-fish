@@ -5,10 +5,9 @@ from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 
-# %% Query probes
-
-path_probes = Path(Path.cwd() / '..' / '..' / 'data' / 'fasta' / 'Probes__cov-2').resolve()
-file_results = path_probes / 'Probes__cov-2_ALL__with_blast.csv'
+# %% Specify folders and files
+path_probes = Path(Path.cwd() / '..' / '..' / 'data' / 'probes' / 'Probes__cov-2').resolve()
+file_results = path_probes / 'Probes__cov-2_ALL__with_blast_FLAPY.csv'
 probes_summary_load = pd.read_csv(file_results)
 probes_summary_load = probes_summary_load.fillna(0)
 
@@ -21,18 +20,24 @@ query_cov_align = 'cov2_align_perc > 98'
 n_probes = probes_summary_load.query(query_cov_align).shape[0]
 print(f'Query [{query_cov_align}] yields {n_probes} probes')
 
+query_both = query_probes + '&' + query_cov_align
+n_probes = probes_summary_load.query(query_both).shape[0]
+print(f'Query [{query_both}] yields {n_probes} probes')
+
 # %%  Get all alignment length in file
+blast_align_max = 20
+
 col_names = list(probes_summary_load.columns.values)
 cols_length = [col_name for col_name in col_names if ('_length' in col_name) and (not 'cov-2' in col_name)  ]
 
 for col_length in cols_length:
     col_mismatch = col_length.replace('length','mismatch')
-    query = f'{col_length}-{col_mismatch}<=20'
+    query = f'{col_length}-{col_mismatch}<={blast_align_max}'
     n_probes = probes_summary_load.query(query).shape[0]
     print(f'Query [{query}] yields {n_probes} probes')
 
 # %% Query all
-query_align_length = ''.join(map(lambda x: x + '-' + x.replace('length','mismatch') + '<=20 & ', cols_length)) 
+query_align_length = ''.join(map(lambda x: x + '-' + x.replace('length', 'mismatch') + f'<={blast_align_max} & ', cols_length)) 
 query_align_length = query_align_length[:-2]  #
 n_probes = probes_summary_load.query(query_align_length).shape[0]
 print(f'Query [COMBINED alignment length] yields {n_probes} probes')
@@ -44,9 +49,9 @@ print(f'Query [ALL restrictions] yields {n_probes} probes')
 
 # %% Plot probe positions
 probes_query = probes_summary_load.query(query_all)
-path_save = path_probes / 'query'
+path_save = path_probes / 'query' / f'blast_align_max_{blast_align_max}'
 if not path_save.is_dir():
-    path_save.mkdir()
+    path_save.mkdir(parents=True)
 
 # Save query
 file_save = path_save / 'query_string.txt'
@@ -59,7 +64,7 @@ probes_query.to_csv(file_save, sep=',')
 
 # Save plot with probe positions
 plt.figure(figsize=(10,1))
-plt.plot(probes_query['theStartPos'].values, np.ones((df_query.shape[0],1)), '|', color='black')
+plt.plot(probes_query['theStartPos'].values, np.ones((probes_query.shape[0],1)), '|', color='black')
 plt.tight_layout()
 file_save = path_save / 'probe_positions.png'
 plt.savefig(file_save, dpi=300)
