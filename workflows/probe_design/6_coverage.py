@@ -1,9 +1,13 @@
 
 # __IMPORTANT__: to run this file, you need to have the coverage data analyzed (resulting in a coverage.csv file)
 
+
 # %% Specify which data-set should be analyzed
 name_probes = 'Probes__cov-2'  # Genomic probes
+name_probes = 'Probes__cov-2--RevComp'  # Replication intermediate
 
+reverse_complement = True
+length_genome = 29904
 
 # %% Imports
 from pathlib import Path
@@ -27,8 +31,11 @@ if not path_results.is_dir():
 def calc_coverage(start, end):
     return coverage.query('pos>=@start & pos<=@end')['cov'].median(axis=0)
 
-probes_summary['ngs_cov'] = probes_summary.apply(lambda row: calc_coverage(row['theStartPos'], row['theEndPos']), axis=1)
-
+if not reverse_complement:
+    probes_summary['ngs_cov'] = probes_summary.apply(lambda row: calc_coverage(row['theStartPos'], row['theEndPos']), axis=1)
+else:
+    probes_summary['ngs_cov'] = probes_summary.apply(lambda row: calc_coverage(length_genome-row['theEndPos'], length_genome-row['theStartPos']), axis=1)
+    
 # Save plot with probe positions
 plt.figure(figsize=(10,6))
 plt.plot(probes_summary['theStartPos'],probes_summary['ngs_cov'],'o')

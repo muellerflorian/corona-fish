@@ -1,7 +1,7 @@
 
 # %% Specify which data-set should be analyzed
 name_probes = 'Probes__cov-2'  # Genomic probes
-
+name_probes = 'Probes__cov-2--RevComp'  # Replication intermediate
 
 # %% Imports
 import pandas as pd
