@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 # %% Specify folders and files
 path_probes = Path(Path.cwd() / '..' / '..' / 'data' / 'probes' / 'Probes__cov-2').resolve()
-file_results = path_probes / 'Probes__cov-2_ALL__with_blast_FLAPY.csv'
+file_results = path_probes / 'Probes__cov-2_ALL__with_blast_FLAPY__coverage.csv'
 probes_summary_load = pd.read_csv(file_results)
 probes_summary_load = probes_summary_load.fillna(0)
 
@@ -43,13 +43,15 @@ n_probes = probes_summary_load.query(query_align_length).shape[0]
 print(f'Query [COMBINED alignment length] yields {n_probes} probes')
 
 query_all = query_align_length + '&' + query_probes + '&' + query_cov_align
-n_probes = probes_summary_load.query(query_all).shape[0]
+probes_query = probes_summary_load.query(query_all)
+n_probes = probes_query.shape[0]
 print(f'Query [ALL restrictions] yields {n_probes} probes')
 
 
-# %% Plot probe positions
-probes_query = probes_summary_load.query(query_all)
+# %%  Select probes with highest coverage
+probes_query = probes_query.nlargest(96, columns=['ngs_cov'])
 
+# %%
 path_save = path_probes / 'query' / f'blast_align_max_{blast_align_max}'
 if not path_save.is_dir():
     path_save.mkdir(parents=True)
@@ -65,9 +67,16 @@ probes_query.to_csv(file_save, sep=',', index=False)
 
 # Save plot with probe positions
 plt.figure(figsize=(10,1))
-plt.plot(probes_query['theStartPos'].values, np.ones((probes_query.shape[0],1)), '|', color='black')
+plt.plot(probes_query['theStartPos'], np.ones((probes_query.shape[0],1)), '|', color='black')
 plt.tight_layout()
-file_save = path_save / 'probe_positions.png'
+file_save = path_save / 'probes_positions.png'
+plt.savefig(file_save, dpi=300)
+
+# Save plot with probe positions
+plt.figure(figsize=(10,1))
+plt.plot(probes_query['theStartPos'], np.ones((probes_query.shape[0],1)), '|', color='black')
+plt.tight_layout()
+file_save = path_save / 'probes_positions.png'
 plt.savefig(file_save, dpi=300)
 
 # %%

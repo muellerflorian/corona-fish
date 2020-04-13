@@ -3,6 +3,8 @@
 - [Probe-design for COV-2](#probe-design-for-cov-2)
   - [Overview](#overview)
     - [Target **SARS-CoV-2** (NC_045512.2)](#target-sars-cov-2-nc0455122)
+    - [NGS coverage](#ngs-coverage)
+      - [Background](#background)
     - [Specific over other Coronaviruses](#specific-over-other-coronaviruses)
     - [Specific over other viruses/pathogens](#specific-over-other-virusespathogens)
     - [Probes are (web) blasted against possible host genomes](#probes-are-web-blasted-against-possible-host-genomes)
@@ -17,8 +19,10 @@
     - [4.Blast sequence against human transcriptome](#4blast-sequence-against-human-transcriptome)
     - [5. Combine blast results](#5-combine-blast-results)
       - [Workflow](#workflow-3)
-    - [6. Query probes](#6-query-probes)
+    - [6. NGS coverage of probes](#6-ngs-coverage-of-probes)
       - [Workflow](#workflow-4)
+    - [7. Query probes](#7-query-probes)
+      - [Workflow](#workflow-5)
   - [Additional information](#additional-information)
     - [Blast](#blast)
       - [Windows](#windows)
@@ -35,6 +39,25 @@
 - For a **blast** search against this genome, we use: `data\genomes\cov2\cov2.fasta`
 - For a **blas**t against >2500 **aligned cov-2 genomes**, we use: `data\genomes\cov2\cov2_aligned.fasta`
 - **Target regions** are define in the file `data\Wuhan-Hu-1_2019__target_regions.tsv`. This can be the entire genome, or sub-regions.
+
+### NGS coverage
+
+Probes that target regions for having highest NGS coverage are selected.
+
+If new coverage files are added, the first have to be analyzed with the script `workflows\probe_design\0a_analyze_NGS_coverage.py`.
+
+All relevant data is in the folder `data\coverage`
+
+#### Background
+
+> Coverage refers to the average number of times a single base is read during a sequencing run.
+
+What is Coverage in NGS? In theory, a sequencing run will geenrate reads that sample a genome randomly and independently. 
+However, these reads are not distributed equally across an entire genome; some bases are covered by fewer, some by more reads 
+than the average coverage.
+
+As a simplification, coverage can be assumed to be **proportional to the amount of RNA species in the sample**,
+and should hence allow to pinpoint towards regions more likely to be present in a sample (as genomes/subgenomes/transcripts).
 
 ### Specific over other Coronaviruses
 
@@ -245,17 +268,42 @@ __Output__:
 1. csv file with all information of probes.
 2. Some plots showing mismatch distribution.
 
-### 6. Query probes
+### 6. NGS coverage of probes
 
-Results as pandas dataframe. Query probes
+We calculate for each probe the NGS coverage (summarized with the script (`workflows\probe_design\0a_analyze_NGS_coverage.py`).
 
 #### Workflow
 
-__Function__: `probe_design\6_probes_query.py`
+__Function__: `workflows\probe_design\6_coverage.py`
 
 __Input__:
 
-1. Summary csv files
+1. csv file with all information of probes and blast results.
+
+__Output__:
+
+1. csv file with all information of probes, blast results, and probe coverage
+2. Plots showing coverage of each probe.
+
+### 7. Query probes
+
+Results are provided as a csv file combining all information about probe design, blast analysis, and probe coverage. 
+
+Probes are queried for
+
+- GC content
+- Passing sequence filters
+- Highest NGS coverage
+- Maximum overlap with different cov-2 genomes
+- Minimum overlap with other beta-corona viruses, other viruses/pathogens causing similar symptomes.
+
+#### Workflow
+
+__Function__: `probe_design\7_probes_query.py`
+
+__Input__:
+
+1. Summary csv file.
 
 __Output__:
 
