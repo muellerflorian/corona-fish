@@ -123,6 +123,8 @@ creates a separate fasta file for each target region type. If several sequences 
 defined for a target regions type, the script will create a multi-fasta file, e.g. 
 multiple fasta entries in one file,
 
+In this function, you can define if the fasta sequence should be the **reverse complement**.
+
 __Note__: fasta file names, sequence ids or description should **NOT** contain underscores. In Oligostan, underscores are used to split string to extract some meta-data.
 
 #### Workflow

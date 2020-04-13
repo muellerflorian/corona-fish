@@ -1,4 +1,8 @@
 
+# %% Specify which data-set should be analyzed
+name_probes = 'Probes__cov-2'  # Genomic probes
+
+
 # %% Imports
 import pandas as pd
 from pathlib import Path
@@ -6,8 +10,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # %% Specify folders and files
-path_probes = Path(Path.cwd() / '..' / '..' / 'data' / 'probes' / 'Probes__cov-2').resolve()
-file_results = path_probes / 'Probes__cov-2_ALL__with_blast_FLAPY__coverage.csv'
+path_probes = Path(Path.cwd() / '..' / '..' / 'data' / 'probes' / f'{name_probes}').resolve()
+file_results = path_probes / f'{name_probes}_ALL__with_blast_FLAPY__coverage.csv'
 probes_summary_load = pd.read_csv(file_results)
 probes_summary_load = probes_summary_load.fillna(0)
 
@@ -28,7 +32,7 @@ print(f'Query [{query_both}] yields {n_probes} probes')
 blast_align_max = 22
 
 col_names = list(probes_summary_load.columns.values)
-cols_length = [col_name for col_name in col_names if ('_length' in col_name) and (not 'cov-2' in col_name)  ]
+cols_length = [col_name for col_name in col_names if ('_length' in col_name) and (not 'cov-2' in col_name)]
 
 for col_length in cols_length:
     col_mismatch = col_length.replace('length','mismatch')

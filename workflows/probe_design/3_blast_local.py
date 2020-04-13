@@ -1,4 +1,8 @@
 
+# %% Specify which data-set should be analyzed
+name_probes = 'Probes__cov-2'  # Genomic probes
+
+
 # %% Imports
 from pathlib import Path
 import importlib
@@ -8,13 +12,15 @@ import sys
 # %% Blast against local databases
 importlib.reload(probe_designer)
 
-# Folders with probe sequences, blast data-base and to store results
-path_probes = Path(Path.cwd() / '..' / '..' / 'data' / 'probes' / 'Probes__cov-2').resolve()
-path_genomes = Path(Path.cwd() / '..' / '..' / 'data' / 'genomes').resolve()
-path_save = Path(Path.cwd() / '..' / '..' / 'data' / 'probes' / 'Probes__cov-2' / 'blast').resolve()
+# Folders with probe sequences
+path_data = Path(Path.cwd() / '..' / '..' / 'data' ).resolve()
+path_probes = path_data / 'probes' / f'{name_probes}'
+file_probes = path_probes / f'{name_probes}_ALL.fasta'  # Sequence without FLAP
+file_probes_FLAP = path_probes / f'{name_probes}_ALL_FLAPY.fasta'  # Sequence without FLAP
 
-file_probes = path_probes / 'Probes__cov-2_ALL.fasta'  # Sequence without FLAP
-file_probes_FLAP = path_probes / 'Probes__cov-2_ALL_FLAPY.fasta'  # Sequence without FLAP
+# Folder with blast data-base and to store results
+path_genomes = Path(Path.cwd() / '..' / '..' / 'data' / 'genomes').resolve()
+path_save = path_probes / 'blast'
 
 #  >>> Just to make sure that the target sequences are correct
 db = path_genomes / 'cov2' / 'cov2.fasta'

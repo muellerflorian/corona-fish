@@ -1,7 +1,8 @@
 
-
-# TODO: important or not to include genetic variability within virus?
 # __IMPORTANT__: to run this file, you need to have the coverage data analyzed (resulting in a coverage.csv file)
+
+# %% Specify which data-set should be analyzed
+name_probes = 'Probes__cov-2'  # Genomic probes
 
 
 # %% Imports
@@ -14,8 +15,8 @@ path_data = Path(Path.cwd() / '..' / '..' / 'data').resolve()
 file_coverage = path_data / 'coverage' / 'coverage.csv'
 coverage = pd.read_csv(file_coverage)
 
-path_probes = Path(Path.cwd() / '..' / '..' / 'data' / 'probes' / 'Probes__cov-2').resolve()
-file_results = path_probes / 'Probes__cov-2_ALL__with_blast_FLAPY.csv'
+path_probes = Path(Path.cwd() / '..' / '..' / 'data' / 'probes' / f'{name_probes}').resolve()
+file_results = path_probes / f'{name_probes}_ALL__with_blast_FLAPY.csv'
 probes_summary = pd.read_csv(file_results)
 
 path_results = path_probes / 'coverage'
@@ -38,7 +39,7 @@ file_save = path_results / 'probes_coverage.png'
 plt.savefig(file_save, dpi=300)
 
 # >>> Save file to csv
-file_save = path_probes / 'Probes__cov-2_ALL__with_blast_FLAPY__coverage.csv'
+file_save = path_probes / f'{name_probes}_ALL__with_blast_FLAPY__coverage.csv'
 probes_summary.to_csv(file_save, sep=',', index=False)   
 print(f'\n\nSUMMARY saved as {file_save}')
 

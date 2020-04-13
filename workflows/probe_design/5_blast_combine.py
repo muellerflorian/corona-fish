@@ -1,6 +1,7 @@
 
+# %% Specify which data-set should be analyzed
+name_probes = 'Probes__cov-2'  # Genomic probes
 
-# TODO: important or not to include genetic variability within virus?
 
 # %% Imports
 from pathlib import Path
@@ -14,11 +15,11 @@ import importlib
 
 # %% Folders for data and results
 path_data = Path(Path.cwd() / '..' / '..' / 'data').resolve()
-path_blast = path_data / 'probes' / 'Probes__cov-2' / 'blast'
-path_probes = path_data / 'probes' / 'Probes__cov-2'
+path_blast = path_data / 'probes' / f'{name_probes}' / 'blast'
+path_probes = path_data / 'probes' / f'{name_probes}'
 path_results = path_blast / 'results_details'
 
-file_summary = path_probes / 'Probes__cov-2_ALL_summary.txt' 
+file_summary = path_probes / f'{name_probes}_ALL_summary.txt'
 
 if not path_results.is_dir():
     path_results.mkdir()
@@ -28,21 +29,21 @@ importlib.reload(probe_designer)
 
 # >>> Import web blast
 blast_web_all = probe_designer.blast_summarize(path_blast=path_blast / 'web',
-                                file_identifier=path_data / 'blast_identifiers.json',
-                                sep=',', 
-                                ext='csv',
-                                path_results=path_results,
-                                refseq_keep=['NM_', 'XM_', 'NR', 'XR_'])
+                                               file_identifier=path_data / 'blast_identifiers.json',
+                                               sep=',', 
+                                               ext='csv',
+                                               path_results=path_results,
+                                               refseq_keep=['NM_', 'XM_', 'NR', 'XR_'])
 
 
 # >>> Import lcoal blast against other viruses
 importlib.reload(probe_designer)
 blast_local_all = probe_designer.blast_summarize(path_blast=path_blast / 'local',
-                                file_identifier=path_data / 'blast_identifiers.json',
-                                sep='\t',
-                                ext='txt',
-                                path_results=path_results, 
-                                refseq_keep=None)
+                                                 file_identifier=path_data / 'blast_identifiers.json',
+                                                 sep='\t',
+                                                 ext='txt',
+                                                 path_results=path_results,
+                                                 refseq_keep=None)
 
 #  >>> import blast against cov-2 alignment
 
@@ -81,24 +82,24 @@ for blast_add in blast_all:
     probes_summary_joined = pd.merge(left=probes_summary_joined, right=blast_add, how='left', left_on='qseqid', right_on='qseqid')
 
 # >>> Save file to csv
-file_save = path_probes / 'Probes__cov-2_ALL__with_blast_FLAPY.csv'
-probes_summary_joined.to_csv(file_save, sep=',', index=False)   
+file_save = path_probes / f'{name_probes}_ALL__with_blast_FLAPY.csv'
+probes_summary_joined.to_csv(file_save, sep=',', index=False)
 print(f'\n\nSUMMARY saved as {file_save}')
 
 # %% Plot results of alignment against cov-2
 
 # >>> Number of probe squences that match well all consensus sequences
-plt.figure(figsize=(5,4))
+plt.figure(figsize=(5, 4))
 sns.distplot(blast_covid_alignment[f'cov2_align_perc'], 
              bins = np.arange(90,100.05,0.25),
-             kde=False, rug=False);
+             kde=False, rug=False)
 plt.title(f'Percentage of alignment\nwith {n_genomes} genomes for each oligo (n={blast_covid_alignment.shape[0]})')
 plt.tight_layout()
 file_save = path_results / 'cov2-alignment_hist.png'
 plt.savefig(file_save, dpi=300)
 
 # >> Cummulative histogram
-plt.figure(figsize=(5,4))
+plt.figure(figsize=(5, 4))
 kwargs = {'cumulative': True}
 sns.distplot(blast_covid_alignment[f'cov2_align_perc'], hist_kws=kwargs, kde_kws=kwargs)
 plt.title(f'Percentage of alignment\nwith {n_genomes} genomes for each oligo (n={blast_covid_alignment.shape[0]})')

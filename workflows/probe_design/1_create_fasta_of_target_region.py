@@ -7,6 +7,7 @@ from Bio.SeqRecord import SeqRecord
 # %% Read cov-2 sequence from gb file
 file_corona_seq = Path(Path.cwd() / '..' / '..' /'data' / 'Wuhan-Hu-1_2019.gb').resolve()
 file_target_regions = Path(Path.cwd() / '..' / '..' / 'data' / 'Wuhan-Hu-1_2019__target_regions.tsv').resolve()
+reverse_complement = False
 
 # %% Read sequence file
 
@@ -47,6 +48,10 @@ with open(file_target_regions) as tsvfile:
 
         seq_loop = corona_seq[index_start: index_end]
         seq_rec = SeqRecord(seq_loop)
+
+        if reverse_complement:
+            seq_rec = seq_rec.reverse_complement()
+
         seq_rec.description = f'start-{index_start+1}--end-{index_end}'
 
         if target_region['Name'] == 'primer-region':
@@ -68,28 +73,33 @@ with open(file_target_regions) as tsvfile:
             cov_2_seq.append(seq_rec)
 
 # %% Write target sequences to fasta file
-path_save = Path(Path.cwd() / '..' / '..' / 'data'/ 'fasta' ).resolve()
+path_save = Path(Path.cwd() / '..' / '..' / 'data'/ 'probes' ).resolve()
 if not path_save.is_dir():
     path_save.mkdir(parents=True)
     print(f'Fasta sequences will be saved in folder {path_save}')
 
+if reverse_complement:
+    suffix = '--RevComp.fasta'
+else:
+    suffix = '.fasta'
+
 if len(cov_2_seq) > 0:
-    file_save = path_save / 'cov-2.fasta'
+    file_save = path_save / f'cov-2{suffix}'
     with open(file_save, "w") as output_handle:
         SeqIO.write(cov_2_seq, output_handle, "fasta")  
 
 if len(primer_seq) > 0:
-    file_save = path_save / 'primer-seq.fasta'
+    file_save = path_save / f'primer-seq{suffix}'
     with open(file_save, "w") as output_handle:
         SeqIO.write(primer_seq, output_handle, "fasta")
 
 if len(target_region_seq) > 0:
-    file_save = path_save / 'target-reg-seq.fasta'  
+    file_save = path_save / f'target-reg-seq{suffix}' 
     with open(file_save, "w") as output_handle:
         SeqIO.write(target_region_seq, output_handle, "fasta")
 
 if len(spike_glyco_seq) > 0:
-    file_save = path_save // 'spike-glyco-seq.fasta'      
+    file_save = path_save / f'spike-glyco-seq{suffix}'    
     with open(file_save, "w") as output_handle:
         SeqIO.write(spike_glyco_seq, output_handle, "fasta")
  
