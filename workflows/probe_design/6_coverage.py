@@ -24,8 +24,7 @@ if not path_results.is_dir():
 
 # %% Calculate sum of NGS probe coverage for each probe
 def calc_coverage(start, end):
-    return coverage.query('pos>=@start & pos<=@end')['cov'].sum(axis=0)
-
+    return coverage.query('pos>=@start & pos<=@end')['cov'].median(axis=0)
 
 probes_summary['ngs_cov'] = probes_summary.apply(lambda row: calc_coverage(row['theStartPos'], row['theEndPos']), axis=1)
 

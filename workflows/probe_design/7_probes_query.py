@@ -73,10 +73,10 @@ file_save = path_save / 'probes_positions.png'
 plt.savefig(file_save, dpi=300)
 
 # Save plot with probe positions
-plt.figure(figsize=(10,1))
-plt.plot(probes_query['theStartPos'], np.ones((probes_query.shape[0],1)), '|', color='black')
+plt.figure(figsize=(10,6))
+plt.plot(probes_query['theStartPos'],probes_query['ngs_cov'],'o', color='black')
 plt.tight_layout()
-file_save = path_save / 'probes_positions.png'
+file_save = path_save / 'probes_coverage.png'
 plt.savefig(file_save, dpi=300)
 
 # %%
