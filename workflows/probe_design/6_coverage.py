@@ -4,7 +4,7 @@
 
 # %% Specify which data-set should be analyzed
 name_probes = 'Probes__cov-2'  # Genomic probes
-name_probes = 'Probes__cov-2--RevComp'  # Replication intermediate
+#name_probes = 'Probes__cov-2--RevComp'  # Replication intermediate
 
 reverse_complement = True
 length_genome = 29904
@@ -12,6 +12,7 @@ length_genome = 29904
 # %% Imports
 from pathlib import Path
 import pandas as pd
+
 import matplotlib.pyplot as plt
 
 # %% Folders for data and results
@@ -45,7 +46,7 @@ plt.tight_layout()
 file_save = path_results / 'probes_coverage.png'
 plt.savefig(file_save, dpi=300)
 
-# >>> Save file to csv
+# %% >>> Save file to csv
 file_save = path_probes / f'{name_probes}_ALL__with_blast_FLAPY__coverage.csv'
 probes_summary.to_csv(file_save, sep=',', index=False)   
 print(f'\n\nSUMMARY saved as {file_save}')
