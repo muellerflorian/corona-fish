@@ -1,20 +1,22 @@
-# Probe-design for COV-2
+# Probe-design for SARS-Cov-2
 
-- [Probe-design for COV-2](#probe-design-for-cov-2)
+- [Probe-design for SARS-Cov-2](#probe-design-for-sars-cov-2)
   - [Overview](#overview)
-    - [Target **SARS-CoV-2** (NC_045512.2)](#target-sars-cov-2-nc0455122)
+    - [Target **SARS-CoV-2** (NC_045512.2)](#target-sars-cov-2-nc_0455122)
     - [NGS coverage](#ngs-coverage)
       - [Background](#background)
-    - [Specific over other Coronaviruses](#specific-over-other-coronaviruses)
-    - [Specific over other viruses/pathogens](#specific-over-other-virusespathogens)
+    - [Other beta-coronaviruses](#other-beta-coronaviruses)
+    - [Other viruses/pathogens](#other-virusespathogens)
     - [Probes are (web) blasted against possible host genomes](#probes-are-web-blasted-against-possible-host-genomes)
   - [Probe-design workflow](#probe-design-workflow)
-    - [1. Create fasta file [Python]](#1-create-fasta-file-python)
+    - [1. Create fasta file for target sequence(s) [Python]](#1-create-fasta-file-for-target-sequences-python)
       - [Workflow](#workflow)
     - [2. Design probes [R]](#2-design-probes-r)
       - [Workflow](#workflow-1)
     - [3. Blast sequences: LOCAL databases](#3-blast-sequences-local-databases)
+      - [Local blast install](#local-blast-install)
       - [Build local database from downloaded fasta sequences](#build-local-database-from-downloaded-fasta-sequences)
+      - [Local blast: Out of memory error: windows](#local-blast-out-of-memory-error-windows)
       - [Workflow](#workflow-2)
     - [4.Blast sequence against human transcriptome](#4blast-sequence-against-human-transcriptome)
     - [5. Combine blast results](#5-combine-blast-results)
@@ -27,26 +29,21 @@
     - [Blast](#blast)
       - [Windows](#windows)
       - [BLASTn output format 6](#blastn-output-format-6)
-      - [Local blast: Out of memory error: windows](#local-blast-out-of-memory-error-windows)
-      - [Other output format for local blast](#other-output-format-for-local-blast)
-      - [Make blast over the internet (no local installation required)](#make-blast-over-the-internet-no-local-installation-required)
 
 ## Overview
 
 ### Target **SARS-CoV-2** (NC_045512.2)
 
-- **Genome** is stored here: `data\Wuhan-Hu-1_2019.gb`
+- **Genome** sequence is stored here: `data\Wuhan-Hu-1_2019.gb`
 - For a **blast** search against this genome, we use: `data\genomes\cov2\cov2.fasta`
-- For a **blas**t against >2500 **aligned cov-2 genomes**, we use: `data\genomes\cov2\cov2_aligned.fasta`
+- For a **blast** against >2500 **aligned cov-2 genomes**, we use: `data\genomes\cov2\cov2_aligned.fasta`. Please see `data\genomes\cov2\gisaid_acknowledgements.txt` for the acknowledgments.
 - **Target regions** are define in the file `data\Wuhan-Hu-1_2019__target_regions.tsv`. This can be the entire genome, or sub-regions.
 
 ### NGS coverage
 
-Probes that target regions for having highest NGS coverage are selected.
+Probes that target regions for having highest NGS coverage are selected. All relevant data is in the folder `data\coverage`.
 
-If new coverage files are added, the first have to be analyzed with the script `workflows\probe_design\0a_analyze_NGS_coverage.py`.
-
-All relevant data is in the folder `data\coverage`
+If new coverage files are added, they first have to be analyzed with the script `workflows\probe_design\0a_analyze_NGS_coverage.py`.
 
 #### Background
 
@@ -59,9 +56,11 @@ than the average coverage.
 As a simplification, coverage can be assumed to be **proportional to the amount of RNA species in the sample**,
 and should hence allow to pinpoint towards regions more likely to be present in a sample (as genomes/subgenomes/transcripts).
 
-### Specific over other Coronaviruses
+### Other beta-coronaviruses
 
-`data\genomes\beta-corona`: genomes are stored in multi-fasta file. 
+Identified probes should not be specific against any other beta-coronavirus.
+
+`data\genomes\beta-corona`: genomes are stored in multi-fasta file.
 
 | beta-coronavirus | ID          | Included |
 |------------------|-------------|----------|
@@ -72,9 +71,11 @@ and should hence allow to pinpoint towards regions more likely to be present in 
 | NL63             | JX504050.1  | [x]      |
 | 229E             | NC_002645.1 | [x]      |
 
-### Specific over other viruses/pathogens
+### Other viruses/pathogens
 
-`data\genomes\viruses`: genomes are stored in separate fasta file. 
+Identified probes should not be specific against other pathogens/viruses with similar symptomes.
+
+`data\genomes\viruses`: genomes are stored in separate fasta file.
 
 | Virus/pathogen                                             | ID               | Included |
 |------------------------------------------------------------|------------------|----------|
@@ -88,23 +89,17 @@ and should hence allow to pinpoint towards regions more likely to be present in 
 | Mycoplasma pneumoniae                                      | NZ_CP010546      | [x]      |
 | Chlamydophila pneumoniae                                   | NC_005043.1      | [x]      |
 | Influenza A H3N2                                           |                  | [x]      |
-| Influenza A H1N1 (such as A/Alaska/58/2017(H1N1))          | txid2043069      | [x]      |
-| Influenza B (such as B/Yamagata/16/88 and B/Victoria/2/87) | txid416674       | [x]      |
-| Influenza C                                                | GCF_000856665.10 | [x]      |
-| Influenza D                                                | GCF_002867775.1  | [x]      |
+| Influenza A H1N1 (such as A/Alaska/58/2017(H1N1))          | [txid2043069](https://www.ncbi.nlm.nih.gov/nuccore/?term=txid2043069[Organism:noexp])      | [x]      |
+| Influenza B (such as B/Yamagata/16/88 and B/Victoria/2/87) | [txid416674](https://www.ncbi.nlm.nih.gov/nuccore/?term=txid416674[Organism:noexp])       | [x]      |
+| Influenza C                                                | [GCF_000856665.10](https://www.ncbi.nlm.nih.gov/nuccore/1250175392,1250175391,1250175390,1250175389,1250175388,211910015,52630357) | [x]      |
+| Influenza D                                                | [GCF_002867775.1](https://www.ncbi.nlm.nih.gov/nuccore/1328406502,1328406500,1328406498,1328406496,1328406494,1328406492,1328406490)  | [x]      |
 | Rhinovirus/enterovirus                                     | NC_038312.1      | [x]      |
-
-__some urls__ for the segmented viruses, I checked for the Taxonomy entries and then downloaded
-the coding squences.
-
-- H1N1: https://www.ncbi.nlm.nih.gov/nuccore/?term=txid2043069[Organism:noexp]
-- Influenza B: https://www.ncbi.nlm.nih.gov/nuccore/?term=txid416674[Organism:noexp]
-- Influenza C: reference genome: https://www.ncbi.nlm.nih.gov/nuccore/1250175392,1250175391,1250175390,1250175389,1250175388,211910015,52630357  
-- Influenza D: https://www.ncbi.nlm.nih.gov/nuccore/1328406502,1328406500,1328406498,1328406496,1328406494,1328406492,1328406490
   
 ### Probes are (web) blasted against possible host genomes
 
-Only tanscripts are kept from blast hits, Refseq annotations starting with : 'NM_', 'XM_', 'NR', 'XR_'
+Identified probes should not be specific against transcriptome of commonly used host organisms.
+
+Only tanscripts are kept from blast hits, e.g. Refseq annotations starting with : 'NM_', 'XM_', 'NR', 'XR_'
 
 | Host                 | Identifier | Tested |
 |----------------------|------------|--------|
@@ -116,12 +111,12 @@ Only tanscripts are kept from blast hits, Refseq annotations starting with : 'NM
 
 ## Probe-design workflow
 
-### 1. Create fasta file [Python]
+### 1. Create fasta file for target sequence(s) [Python]
 
 Takes the file with the target regions, extracts their sequences, and
 creates a separate fasta file for each target region type. If several sequences are 
 defined for a target regions type, the script will create a multi-fasta file, e.g. 
-multiple fasta entries in one file,
+multiple fasta entries in one file.
 
 In this function, you can define if the fasta sequence should be the **reverse complement**.
 
@@ -143,7 +138,8 @@ __Input__:
 
   For a new region type, several target ranges (specified by their start and end position) can be specified.
 
-  If you define a new region type, the Python script `1_create_fasta_of_target_region.py` to take new entry types into considerations.
+  If you define a new region type, you have to modify the the Python script `1_create_fasta_of_target_region.py` to take 
+  new entry types into considerations.
 
 __Output__:
 
@@ -154,7 +150,7 @@ __Output__:
 
 We use Oligostan for [probe-design](https://www.ncbi.nlm.nih.gov/pubmed/27599845).
 
-See also the provided document `workflows\probe_design\Oligostan_documentation.doc` for more details. 
+See also the provided document `workflows\probe_design\Oligostan_documentation.doc` for more details.
 
 __IMPORTANT__: in the probe design script you have to update the path to the fasta sequence (line 8).
 
@@ -196,17 +192,12 @@ parameters
   
 __IMPORTANT__: you have to build the databases on your local installation (see below).
 
-- Local version of blast + databases being installed.
-- Some more information
-  - https://biopython.org/DIST/docs/tutorial/Tutorial.html  search for "Running blast locally"
-  - Blast+ user manual: https://www.ncbi.nlm.nih.gov/books/NBK279690/
-  - https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download
+#### Local blast install
 
-- Downloads:
-  - Blast+ suite: https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/
-  - Instructions for different operating systems are provided.
-    Important; blast commands have to be in system path. https://www.ncbi.nlm.nih.gov/books/NBK279671/
-  - Database for human transcripts: https://ftp.ncbi.nlm.nih.gov/blast/db/
+You can download the blast+ suite from this [link](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/). 
+Instructions for different operating systems are provided.
+
+__Important__: blast commands have to be in system path as described [here](https://www.ncbi.nlm.nih.gov/books/NBK279671/).
 
 - Local databases can be build for alignment against any fasta sequence.
 
@@ -222,9 +213,21 @@ The **general command** is `makeblastdb -in beta-corona.fasta -dbtype nucl -titl
 - The `-parse_seqids` option is required to keep the original sequence identifiers.
 - The `-max_file_sz` option helps to avoid an error under windows?
 
-Has to be performed for each of the genomes were a blast is desired.
+Has to be performed for each of the genomes where a blast is desired.
 
-Build can provoke error messages under Windows. See misc below.
+Build can provoke error messages under Windows. See  below.
+
+#### Local blast: Out of memory error: windows
+
+This can create an error on windows (https://github.com/flu-crew/octoFLU/issues/16). Can be resolved by 
+by setting an environmental variable `BLASTDB_LMDB_MAP_SIZE=1000000`
+
+Steps to create or modify environment variables are summarized below:
+
+1. Search for "Environment Variables" and Select "Edit environmental ...".
+2. Click the "New" button under the "User variable for ..." panel
+3. Type the environment variable `BLASTDB_LMDB_MAP_SIZE` and set its value to `1000000`
+4. Click "OK" to close the prompts
 
 #### Workflow
 
@@ -342,52 +345,7 @@ BLASTn tabular output format 6.
 
 __Note__: additional fields could be added. From blastn -help:
 
-`qseq` means Aligned part of query sequence
-`sseq` means Aligned part of subject sequence
+`qseq` stands for  aligned part of **q**uery sequence
+`sseq` stands for aligned part of **s**ubject sequence
 
 Note that qseq/sseq may contain gaps (`-` characters).
-
-#### Local blast: Out of memory error: windows
-
-This can create an error on windows (https://github.com/flu-crew/octoFLU/issues/16). Can be resolved by 
-by setting an environmental variable `BLASTDB_LMDB_MAP_SIZE=1000000`
-
-Steps to create or modify environment variables are summarized below:
-
-1. Search for "Environment Variables" and Select "Edit environmental ...".
-2. Click the "New" button under the "User variable for ..." panel
-3. Type the environment variable `BLASTDB_LMDB_MAP_SIZE` and set its value to `1000000`
-4. Click "OK" to close the prompts
-
-#### Other output format for local blast
-
-https://www.reddit.com/r/bioinformatics/comments/4ef5p8/how_to_filter_blast_results_using_biopython/
-
-will only work with a local installation
-
-So if you output tabular BLAST results (-outfmt 6), you can use Pandas to quickly
-read, sort, filter your BLAST results without having to worry too much about
-for loops, iterators and parsing properly. Pandas DataFrame is similar to the
-R data.frame - basically a data table with a lot of nice convenience functions
-for sorting, filtering, reading, writing, etc.
-
-For example with tabular output file blast-out.b6:
-
-#### Make blast over the internet (no local installation required)
-
-Starting point: https://www.biostars.org/p/129932/
-
-qblast will accept fasta or a single sequence. 
-
-``` python
-from Bio.Blast import NCBIWWW
-result_handle = NCBIWWW.qblast("blastn", "nt", some_sequence)
-```
-
-refseq_rna as a database ... 
-
-https://www.biostars.org/p/58457/
-
-NCBIWWW.qblast(program="blastn", database="refseq_genomic", sequence=input_sequence, entrez_query="txid7227[ORGN]")
-
-

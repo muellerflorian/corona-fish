@@ -1,7 +1,12 @@
+# %% Run local blast search
+#  Some more information
+#  - https://biopython.org/DIST/docs/tutorial/Tutorial.html  search for "Running blast locally"
+#  - Blast+ user manual: https://www.ncbi.nlm.nih.gov/books/NBK279690/
+#  - https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download
 
 # %% Specify which data-set should be analyzed
-name_probes = 'Probes__cov-2'  # Genomic probes
-name_probes = 'Probes__cov-2--RevComp'  # Replication intermediate
+name_probes = 'Probes__cov-2'           # Genomic probes
+#name_probes = 'Probes__cov-2--RevComp'  # Replication intermediate
 
 # %% Imports
 from pathlib import Path

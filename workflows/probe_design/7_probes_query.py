@@ -1,12 +1,21 @@
 
 # %% Specify which data-set should be analyzed
 name_probes = 'Probes__cov-2'  # Genomic probes
-name_probes = 'Probes__cov-2--RevComp'  # Replication intermediate
+#name_probes = 'Probes__cov-2--RevComp'  # Replication intermediate
 
 # %% Imports
 import pandas as pd
 from pathlib import Path
 import numpy as np
+
+# Matplotlib
+#  >> change default font to get editable fonts in PDF files
+#     http://jonathansoma.com/lede/data-studio/matplotlib/exporting-from-matplotlib-to-open-in-adobe-illustrator/
+import matplotlib
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
+matplotlib.rcParams['font.sans-serif'] = "Arial"
+
 import matplotlib.pyplot as plt
 
 # %% Specify folders and files
@@ -69,12 +78,18 @@ with open(file_save, "w") as text_file:
 file_save = path_save / 'cov2_probes_query.csv'
 probes_query.to_csv(file_save, sep=',', index=False) 
 
+# %% Create some plots
+
 # Save plot with probe positions
 plt.figure(figsize=(10,1))
-plt.plot(probes_query['theStartPos'], np.ones((probes_query.shape[0],1)), '|', color='black')
+y_pos = np.random.rand(probes_query.shape[0],1)
+#y_pos = np.ones((probes_query.shape[0],1))
+plt.plot(probes_query['theStartPos'], y_pos , '|', color='black')
 plt.tight_layout()
-file_save = path_save / 'probes_positions.png'
-plt.savefig(file_save, dpi=300)
+
+plt.savefig(path_save / 'probes_positions.png', dpi=300)
+plt.savefig(path_save / 'probes_positions.pdf', transparent=True)
+
 
 # Save plot with probe positions
 plt.figure(figsize=(10,6))
