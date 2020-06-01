@@ -1,6 +1,10 @@
 # corona-fish
 
-Repository with ressources used for corona-fish project
+This repository provide the code used to design smiFISH probes against SARS-cov-2., described in our paper:
+
+__Title:__ to be defined.
+
+__Authors:__ to be established.
 
 ## Organization of repository
 
