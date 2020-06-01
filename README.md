@@ -1,6 +1,6 @@
 # corona-fish
 
-This repository provide the code used to design smiFISH probes against SARS-cov-2., described in our paper:
+This repository provide the code used to design smiFISH probes against SARS-cov-2., described in our paper, as well as up to date protocols:
 
 __Title:__ to be defined.
 
@@ -59,3 +59,7 @@ conda activate cov-fish
 
 For a detailed description of the design process for the probes, please consult the dedicated 
 [documentation](docs/probe-design-overview.md).
+
+## Protocols
+
+The folder `protocols` contains tried and tested protocols for smiFISH with the SARS-Cov-2 probes.
