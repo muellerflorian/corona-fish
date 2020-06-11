@@ -23,6 +23,8 @@ path_probes = Path(Path.cwd() / '..' / '..' / 'data' / 'probes' / f'{name_probes
 file_results = path_probes / f'{name_probes}_ALL__with_blast_FLAPY__coverage.csv'
 probes_summary_load = pd.read_csv(file_results)
 probes_summary_load = probes_summary_load.fillna(0)
+n_probes = probes_summary_load.shape[0]
+print(f'Total number of probes: {n_probes}')
 
 # %% GC and PNAS filters
 query_probes = 'GCFilter==1 & NbOfPNAS>2'
