@@ -1,23 +1,27 @@
-# Databases are  are created with blast suite. 
+# Databases are  are created with blast suite
+
 See `probe_design\_probe-design-overview.md` for more details.
 
 Following commands have to be executed in the respective subfolders
 
 ## Beta-corona
-```
+
+``` bash
 makeblastdb -in beta_corona.fasta -dbtype nucl -title beta_corona -max_file_sz 500000 -parse_seqids
 ```
 
 ## Cov-2
+
 __Note__: aligned cov-2 contains 2531 cov-2 sequences.
 
-```
+``` bash
 makeblastdb -in cov2.fasta -dbtype nucl -title cov2 -max_file_sz 500000 -parse_seqids
 makeblastdb -in cov2_aligned.fasta -dbtype nucl -title cov2_aligned -max_file_sz 500000 -parse_seqids
 ```
 
 ## Virus genomes
-```
+
+``` bash
 makeblastdb -in chlamydophila_pneumoniae.fasta -dbtype nucl -title chlamydophila_pneumoniae -max_file_sz 500000 -parse_seqids
 makeblastdb -in hpiv1.fasta -dbtype nucl -title hpiv1 -max_file_sz 500000 -parse_seqids
 makeblastdb -in hpiv2.fasta -dbtype nucl -title hpiv2 -max_file_sz 500000 -parse_seqids

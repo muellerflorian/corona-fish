@@ -178,8 +178,7 @@ Contains a fasta file and a summary text file for all probes identified (`ALL`),
 
 ### 3. Blast sequences: LOCAL databases
 
-Perform local blast against several reference genomes. Results are stored as blast hit files with output format 6
-(http://www.metagenomics.wiki/tools/blast/blastn-output-format-6).
+Perform local blast against several reference genomes. Results are stored as blast hit files with [output format 6](http://www.metagenomics.wiki/tools/blast/blastn-output-format-6).
 
 Blast is performed with the option `blastn-short`, which is specifically optimized for shorter sequences (<50 bases). This changes the following
 parameters
@@ -219,7 +218,7 @@ Build can provoke error messages under Windows. See  below.
 
 #### Local blast: Out of memory error: windows
 
-This can create an error on windows (https://github.com/flu-crew/octoFLU/issues/16). Can be resolved by 
+This can create an [error on windows](https://github.com/flu-crew/octoFLU/issues/16). This can be resolved by 
 by setting an environmental variable `BLASTDB_LMDB_MAP_SIZE=1000000`
 
 Steps to create or modify environment variables are summarized below:

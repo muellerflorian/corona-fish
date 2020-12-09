@@ -1,10 +1,6 @@
 # corona-fish
 
-This repository provide the code used to design smiFISH probes against SARS-cov-2., described in our paper, as well as up to date protocols:
-
-__Title:__ to be defined.
-
-__Authors:__ to be established.
+This repository provide the code used to design smiFISH probes against SARS-cov-2.
 
 ## Organization of repository
 
@@ -12,8 +8,8 @@ __Authors:__ to be established.
 * `data`: contains data-sets required for the probe-design.
   * `fasta`: fasta sequences against fish probes were designed
   * `genomes`: different genomes for local blast
-* `docs`: folder containing the documentation.
-* `workflows`: different analysis workflows.
+* `docs`: folder containing documentation for probe-design workflow, the actual design software Oligostan, and our smFISH protocol.
+* `workflows`: different steps in the analysis workflows, e.g for the probe-design.
 
 ## Getting started
 
@@ -59,7 +55,3 @@ conda activate cov-fish
 
 For a detailed description of the design process for the probes, please consult the dedicated 
 [documentation](docs/probe-design-overview.md).
-
-## Protocols
-
-The folder `protocols` contains tried and tested protocols for smiFISH with the SARS-Cov-2 probes.
