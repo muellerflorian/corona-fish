@@ -1,0 +1,7 @@
+{
+    "blastn__ferret.csv": "ferret", 
+    "blastn__green_monkey.csv": "monkey", 
+    "blastn__hamsters.csv": "hamster", 
+    "blastn__homo_sapiens.csv": "human", 
+    "blastn__mus_musculus.csv": "mouse"
+}
