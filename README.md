@@ -25,16 +25,16 @@ Most of the provide code runs under Python.
 
 We recommend creating a **dedicated environment** to run code in this analysis package.
 
-To create an environment called `cov-fish`, open an anaconda prompt and type (Confirm with `y` when asked if you want to proceed (`Proceed ([y]/n)?`):
+To create an environment called `corona-fish`, open an anaconda prompt and type (Confirm with `y` when asked if you want to proceed (`Proceed ([y]/n)?`):
 
 ``` Shell
-conda create --name cov-fish python=3.7
+conda create --name corona-fish python=3.7
 ```
 
 **Activate the environment**:
 
 ``` Shell
-conda activate cov-fish
+conda activate corona-fish
 ```
 
 **Install code for this package**:
